@@ -1,7 +1,7 @@
 #include <d3dx9.h>
-#include "mydirect3d.h"
-#include "common.h"
 #include <stdio.h>
+#include "common.h"
+#include "mydirect3d.h"
 
 //====================================================
 // ’è”’è‹`

@@ -45,4 +45,9 @@ void Keyboard_Update(void);
 bool Keyboard_IsPress(int nKey);
 bool Keyboard_IsTrigger(int nKey);
 bool Keyboard_IsRelease(int nKey);
+
+bool Mouse_Initialize(HINSTANCE hInstance, HWND hWnd);
+void Mouse_Finalize(void);
+void Mouse_Update(void);
+DIMOUSESTATE* GetMouseState(void);
 #endif

@@ -1,12 +1,12 @@
-#include<windows.h>
-#include<d3d9.h>
-#include<d3dx9.h>
-#include<dxerr.h>
-#include<stdio.h>
-#include"texture.h"
-#include<math.h>	//sin cosを使うのに必要
-#include"common.h"
-#include"mydirect3d.h"
+#include <windows.h>
+#include <d3d9.h>
+#include <d3dx9.h>
+#include <dxerr.h>
+#include <stdio.h>
+#include <math.h>	//sin cosを使うのに必要
+#include "common.h"
+#include "mydirect3d.h"
+#include "texture.h"
 
 #ifndef _SPRITE_H_
 #define _SPRITE_H_

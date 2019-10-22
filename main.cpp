@@ -3,22 +3,23 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dinput8.lib")
 
-#include<windows.h>
-#include<stdlib.h>
-#include<d3d9.h>
-#include<d3dx9.h>
-#include<dxerr.h>
-#include<math.h>	//sin cosを使うのに必要
-#include"common.h"
-#include"mydirect3d.h"
-#include"sprite.h"
-#include"texture.h"
-#include"mydirect3d.h"
-#include"debug_font.h"
-#include"time.h"
+#include <windows.h>
+#include <stdlib.h>
+#include <d3d9.h>
+#include <d3dx9.h>
+#include <dxerr.h>
+#include <math.h>	//sin cosを使うのに必要
+#include <time.h>
+#include "common.h"
+#include "mydirect3d.h"
+#include "debug_font.h"
+#include "sprite.h"
+#include "texture.h"
 #include "system_timer.h"
-#include "sound.h"
 #include "input.h"
+#include "sound.h"
+#include "game.h"
+#include "player.h"
 
 //====================================================
 // 定数定義
@@ -136,6 +137,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	MSG msg = {}; // msg.message == WM_NULL
 
 	Keyboard_Initialize(hInstance, g_hWnd);
+	Mouse_Initialize(hInstance, g_hWnd);
 
 	while (WM_QUIT != msg.message)
 	{
@@ -215,7 +217,7 @@ bool Initialize(void)
 
 	Texture_Load();
 
-	SetScene(SCENE_TITLE);
+	SetScene(SCENE_GAME);
 
 	InitSound(g_hWnd);
 	
@@ -235,6 +237,7 @@ bool Initialize(void)
 void Update(void)
 {
 	Keyboard_Update();
+	Mouse_Update();
 
 	switch (g_Scene)
 	{
@@ -242,7 +245,7 @@ void Update(void)
 
 		break;
 	case SCENE_GAME:
-
+		Game_Update();
 		break;
 	case SCENE_RESULT:
 
@@ -271,7 +274,7 @@ void Draw(void)
 
 		break;
 	case SCENE_GAME:
-
+		Game_Draw();
 		break;
 	case SCENE_RESULT:
 
@@ -304,6 +307,7 @@ void Finalize(void)
 	Sprite_Finalize();
 	Texture_Release();
 	// ゲームの終了処理(Direct3Dの終了処理)
+	Mouse_Finalize();
 	Keyboard_Finalize();
 	DebugFont_Finalize();
 }
@@ -316,7 +320,7 @@ void SetScene(SCENE s)
 
 		break;
 	case SCENE_GAME:
-
+		Game_Finalize();
 		break;
 	case SCENE_RESULT:
 
@@ -331,7 +335,7 @@ void SetScene(SCENE s)
 
 		break;
 	case SCENE_GAME:
-
+		Game_Initialize();
 		break;
 	case SCENE_RESULT:
 

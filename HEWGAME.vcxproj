@@ -19,32 +19,38 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\BASEDX\common.h" />
-    <ClInclude Include="..\BASEDX\debug_font.h" />
-    <ClInclude Include="..\BASEDX\HitCheck.h" />
-    <ClInclude Include="..\BASEDX\input.h" />
-    <ClInclude Include="..\BASEDX\mydirect3d.h" />
-    <ClInclude Include="..\BASEDX\sound.h" />
-    <ClInclude Include="..\BASEDX\sprite.h" />
-    <ClInclude Include="..\BASEDX\system_timer.h" />
-    <ClInclude Include="..\BASEDX\texture.h" />
+    <ClInclude Include="bg.h" />
+    <ClInclude Include="common.h" />
+    <ClInclude Include="debug_font.h" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="HitCheck.h" />
+    <ClInclude Include="input.h" />
+    <ClInclude Include="mydirect3d.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="sound.h" />
+    <ClInclude Include="sprite.h" />
+    <ClInclude Include="system_timer.h" />
+    <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\BASEDX\debug_font.cpp" />
-    <ClCompile Include="..\BASEDX\HitCheck.cpp" />
-    <ClCompile Include="..\BASEDX\input.cpp" />
-    <ClCompile Include="..\BASEDX\main.cpp" />
-    <ClCompile Include="..\BASEDX\mydirect3d.cpp" />
-    <ClCompile Include="..\BASEDX\sound.cpp" />
-    <ClCompile Include="..\BASEDX\sprite.cpp" />
-    <ClCompile Include="..\BASEDX\system_timer.cpp" />
-    <ClCompile Include="..\BASEDX\texture.cpp" />
+    <ClCompile Include="bg.cpp" />
+    <ClCompile Include="debug_font.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="HitCheck.cpp" />
+    <ClCompile Include="input.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mydirect3d.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="sound.cpp" />
+    <ClCompile Include="sprite.cpp" />
+    <ClCompile Include="system_timer.cpp" />
+    <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{46AF853F-A4C1-4A1B-AE38-35E30D102A81}</ProjectGuid>
     <RootNamespace>HEWGAME</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

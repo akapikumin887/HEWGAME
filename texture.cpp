@@ -16,13 +16,13 @@ typedef struct TextureFile_tag
 
 // テクスチャ配列
 static const TextureFile g_TextureFiles[] = {
-	{ "asset/texture/player01.png",62,80 },
-	{ "asset/texture/enemy00.png",65,72 },
-	{ "asset/texture/BG0.jpg",450,800 },
-	//{ "asset/texture/BG1.tga",800,1024 },
-	{ "asset/texture/tama_player00.png",24,21 },
-	{ "asset/texture/tama_enemy00.png",24,24 },
-	{ "asset/texture/explosion.png",60,480 },
+	{ "asset/texture/aiming.png", 60, 60 },
+	{ "asset/texture/enemy00.png", 65, 72 },
+	{ "asset/texture/BG0.jpg", 450, 800 },
+	//{ "asset/texture/BG1.tga", 800, 1024 },
+	{ "asset/texture/tama_player00.png", 24, 21 },
+	{ "asset/texture/tama_enemy00.png", 24, 24 },
+	{ "asset/texture/explosion.png", 60, 480 },
 	// ヘッダーで定義したenumと対応しているので数が異なったり定義名があらわす画像ファイルの順番が異なったりしないようにする
 };
 

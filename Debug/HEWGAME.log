@@ -1,0 +1,18 @@
+﻿  bg.cpp
+  debug_font.cpp
+  game.cpp
+  HitCheck.cpp
+  input.cpp
+  main.cpp
+  mydirect3d.cpp
+  player.cpp
+d:\hal\hew\archery\player.cpp(32): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+d:\hal\hew\archery\player.cpp(36): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+d:\hal\hew\archery\player.cpp(40): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+d:\hal\hew\archery\player.cpp(44): warning C4244: '=': 'int' から 'float' への変換です。データが失われる可能性があります。
+  sound.cpp
+  sprite.cpp
+  system_timer.cpp
+  texture.cpp
+  コードを生成中...
+  HEWGAME.vcxproj -> D:\HAL\HEW\Archery\Debug\HEWGAME.exe

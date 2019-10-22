@@ -1,9 +1,9 @@
+#include <windows.h>
+#include <stdio.h>
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <dxerr.h>
-#include <Windows.h>
-#include <math.h>
-#include <stdio.h>
+#include <math.h>	//sin cos‚ðŽg‚¤‚Ì‚É•K—v
 #include <time.h>
 #include "common.h"
 #include "mydirect3d.h"

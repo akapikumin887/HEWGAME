@@ -1,6 +1,6 @@
 // DirectXŠÖ˜A‚Ìˆ—‚ğ‚Ü‚Æ‚ß‚é
-#include<windows.h>
-#include<d3d9.h>
+#include <windows.h>
+#include <d3d9.h>
 
 #ifndef MYDIRECT3D_H_
 #define MYDIRECT3D_H_

@@ -1,6 +1,6 @@
-#include<windows.h>
-#include<math.h>	//sin cosを使うのに必要
-#include"common.h"
+#include <windows.h>
+#include <math.h>	//sin cosを使うのに必要
+#include "common.h"
 
 #ifndef _HIT_CHECK_H
 #define _HIT_CHECK_H

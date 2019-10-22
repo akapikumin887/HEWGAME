@@ -4,6 +4,7 @@
 #include <Windows.h>
 #define DIRECTINPUT_VERSION (0x0800)
 #include <dinput.h>
+#include "debug_font.h"
 
 //====================================================
 // ƒ}ƒNƒ’è‹`
@@ -24,6 +25,9 @@ LPDIRECTINPUTDEVICE8 g_pDevKeyboard = NULL; // “ü—ÍƒfƒoƒCƒX(ƒL[ƒ{[ƒh)‚Ö‚Ìƒ|ƒCƒ
 BYTE g_aKeyState[NUM_KEY_MAX]; // ƒL[ƒ{[ƒh‚Ì“ü—Íî•ñƒ[ƒN
 BYTE g_aKeyStateTrigger[NUM_KEY_MAX]; // ƒL[ƒ{[ƒh‚ÌƒgƒŠƒK[î•ñƒ[ƒN
 BYTE g_aKeyStateRelease[NUM_KEY_MAX]; // ƒL[ƒ{[ƒh‚ÌƒŠƒŠ[ƒXî•ñƒ[ƒN
+LPDIRECTINPUTDEVICE8 g_pDevMouse = NULL; // “ü—ÍƒfƒoƒCƒX(ƒ}ƒEƒX)‚Ö‚Ìƒ|ƒCƒ“ƒ^
+DIMOUSESTATE g_zdiMouseState; // ƒ}ƒEƒXó‘Ô
+DIMOUSESTATE g_zdiMouseState_bak; // ƒ}ƒEƒXî•ñ(•Ï‰»ŒŸ’m—p)
 
 //====================================================
 // “ü—Íˆ—‚Ì‰Šú‰»
@@ -161,4 +165,88 @@ bool Keyboard_IsTrigger(int nKey)
 bool Keyboard_IsRelease(int nKey)
 {
 	return (g_aKeyStateRelease[nKey] & 0x80) ? true: false;
+}
+
+//====================================================
+// ƒ}ƒEƒX‚Ì‰Šú‰»
+//====================================================
+bool Mouse_Initialize(HINSTANCE hInstance, HWND hWnd)
+{
+	// “ü—Íˆ—‚Ì‰Šú‰»
+	if (!initialize(hInstance))
+	{
+		MessageBox(hWnd, "DirectInputƒIƒuƒWƒFƒNƒg‚ªì‚ê‚Ë‚¥I", "ŒxI", MB_ICONWARNING);
+		return false;
+	}
+
+	// ƒfƒoƒCƒX‚Ìì¬
+	if (FAILED(g_pInput->CreateDevice(GUID_SysMouse, &g_pDevMouse, NULL)))
+	{
+		MessageBox(hWnd, "ƒ}ƒEƒX‚ª‚Ë‚¥I", "ŒxI", MB_ICONWARNING);
+		return false;
+	}
+
+	// ƒf[ƒ^ƒtƒH[ƒ}ƒbƒg‚ðÝ’è
+	if (FAILED(g_pDevMouse->SetDataFormat(&c_dfDIMouse)))
+	{
+		MessageBox(hWnd, "ƒ}ƒEƒX‚Ìƒf[ƒ^ƒtƒH[ƒ}ƒbƒg‚ðÝ’è‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½B", "ŒxI", MB_ICONWARNING);
+		return false;
+	}
+
+	// ‹¦’²ƒ‚[ƒh‚ðÝ’èiƒtƒHƒAƒOƒ‰ƒEƒ“ƒh•”ñ”r‘¼ƒ‚[ƒhj
+	if (FAILED(g_pDevMouse->SetCooperativeLevel(hWnd, (DISCL_FOREGROUND | DISCL_NONEXCLUSIVE))))
+	{
+		MessageBox(hWnd, "ƒ}ƒEƒX‚Ì‹¦’²ƒ‚[ƒh‚ðÝ’è‚Å‚«‚Ü‚¹‚ñ‚Å‚µ‚½B", "ŒxI", MB_ICONWARNING);
+		return false;
+	}
+
+	// ƒfƒoƒCƒX‚ÌÝ’è
+	DIPROPDWORD diprop;
+	diprop.diph.dwSize = sizeof(diprop);
+	diprop.diph.dwHeaderSize = sizeof(diprop.diph);
+	diprop.diph.dwObj = 0;
+	diprop.diph.dwHow = DIPH_DEVICE;
+	diprop.dwData = DIPROPAXISMODE_REL;	// ‘Š‘Î’lƒ‚[ƒh‚ÅÝ’èiâ‘Î’l‚ÍDIPROPAXISMODE_ABSj
+
+	if (g_pDevMouse->SetProperty(DIPROP_AXISMODE, &diprop.diph)) {
+		// ƒfƒoƒCƒX‚ÌÝ’è‚ÉŽ¸”s
+		return false;
+	}
+
+	// ƒL[ƒ{[ƒh‚Ö‚ÌƒAƒNƒZƒXŒ ‚ðŠl“¾(“ü—Í§ŒäŠJŽn)
+	g_pDevMouse->Acquire();
+	return true;
+}
+
+//====================================================
+// ƒ}ƒEƒX‚ÌI—¹ˆ—
+//====================================================
+void Mouse_Finalize(void)
+{
+	if (g_pDevMouse != NULL)
+	{// “ü—ÍƒfƒoƒCƒX(ƒ}ƒEƒX)‚ÌŠJ•ú
+		// ƒ}ƒEƒX‚Ö‚ÌƒAƒNƒZƒXŒ ‚ðŠJ•ú(“ü—Í§ŒäI—¹)
+		g_pDevMouse->Unacquire();
+
+		g_pDevMouse->Release();
+		g_pDevMouse = NULL;
+	}
+}
+
+//====================================================
+// ƒ}ƒEƒX‚ÌXVˆ—
+//====================================================
+void Mouse_Update(void)
+{	
+	// ƒfƒoƒCƒX‚©‚çƒf[ƒ^‚ðŽæ“¾
+	if (FAILED(g_pDevMouse->GetDeviceState(sizeof(DIMOUSESTATE), &g_zdiMouseState)))
+	{
+		g_pDevMouse->Acquire();
+		g_pDevMouse->GetDeviceState(sizeof(DIMOUSESTATE), &g_zdiMouseState);
+	}
+}
+
+DIMOUSESTATE* GetMouseState(void)
+{
+	return &g_zdiMouseState;
 }
