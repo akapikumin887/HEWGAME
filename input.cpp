@@ -4,7 +4,6 @@
 #include <Windows.h>
 #define DIRECTINPUT_VERSION (0x0800)
 #include <dinput.h>
-#include "debug_font.h"
 
 //====================================================
 // マクロ定義
@@ -215,6 +214,7 @@ bool Mouse_Initialize(HINSTANCE hInstance, HWND hWnd)
 
 	// キーボードへのアクセス権を獲得(入力制御開始)
 	g_pDevMouse->Acquire();
+	ShowCursor(false);
 	return true;
 }
 

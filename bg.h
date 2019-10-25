@@ -21,6 +21,9 @@ public:
 	TextureIndex TextureIndex; // テクスチャID
 	int	tx, ty;	               // テクスチャ貼り付け左上座標
 	int	tw, th;	               // テクスチャ貼り付けサイズ
+
+	BG();
+	~BG();
 };
 
 void BG_Initialize(); // BGの初期化

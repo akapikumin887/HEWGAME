@@ -236,6 +236,95 @@ void Sprite_Draw_Rotation(TextureIndex texture_index, float dx, float dy, int tx
 	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, pv, sizeof(Vertex2D));
 }
 
+void Sprite_Draw_Rotation_Arrow(TextureIndex texture_index, float dx, float dy, int tx, int ty, int tw, int th, float radian)
+{
+	LPDIRECT3DDEVICE9 pDevice = Mydirect3D_GetDevice();
+
+	if (!pDevice)
+	{
+		return;
+	}
+	float w = (float)Texture_GetWidth(texture_index);
+	float h = (float)Texture_GetHeight(texture_index);
+
+	// 行列変数宣言
+	D3DXMATRIX world; // ワールド行列
+	D3DXMATRIX rotation; // 回転行列
+	D3DXMATRIX translation; // 平行移動行列
+
+	D3DXMatrixTranslation(&translation, dx, dy, 0.0f); // 平行移動行列作成
+	D3DXMatrixRotationZ(&rotation, radian); // radianだけｚ軸回転する行列を作成
+	D3DXMatrixMultiply(&world, &rotation, &translation); // world = rotation * translation
+
+	// テクスチャ座標計算
+	float u[2], v[2];
+	u[0] = (float)tx / w;
+	v[0] = (float)ty / h;
+	u[1] = (float)(tx + tw) / w;
+	v[1] = (float)(ty + th) / h; // ピクセル座標をテクスチャ座標に変換
+
+	Vertex2D* pv;
+
+	float	lx = tw / 1.0f;
+	float	ly = th / 2.0f;
+
+	g_pVertexBuffer->Lock(0, 0, (void**)&pv, 0); // 配列のポインタを受け取る
+
+	// 頂点データを設定
+	pv[0].position = D3DXVECTOR4(
+		0.0,
+		-ly - 0.5f,
+		0.0,
+		1.0f);
+	pv[1].position = D3DXVECTOR4(
+		+lx - 0.5f,
+		-ly - 0.5f,
+		0.0,
+		1.0f);
+	pv[2].position = D3DXVECTOR4(
+		0.0,
+		+ly - 0.5f,
+		0.0,
+		1.0f);
+	pv[3].position = D3DXVECTOR4(
+		+lx - 0.5f,
+		+ly - 0.5f,
+		0.0,
+		1.0f);
+
+	for (int i = 0; i < 4; i++)
+	{
+		pv[i].color = g_Color;
+	}
+
+	pv[0].texcoord = D3DXVECTOR2(u[0], v[0]);
+	pv[1].texcoord = D3DXVECTOR2(u[1], v[0]);
+	pv[2].texcoord = D3DXVECTOR2(u[0], v[1]);
+	pv[3].texcoord = D3DXVECTOR2(u[1], v[1]);
+
+	// 頂点座標を変換する
+	for (int i = 0; i < 4; i++)
+	{
+		D3DXVec4Transform(
+			&pv[i].position, // 変換結果の格納先ポインタ
+			&pv[i].position, // 変換前データのポインタ
+			&world); // 変換に使う行列のポインタ
+	}
+
+	g_pVertexBuffer->Unlock(); // バーテックスバッファへの書き込み終了
+
+	pDevice->SetFVF(FVF_VERTEX2D);
+	pDevice->SetTexture(0, Texture_GetTexture(texture_index));
+	pDevice->SetStreamSource(0,
+		g_pVertexBuffer, // 描画したいポリゴンのバーテックスバッファ
+		0,
+		sizeof(Vertex2D)); // 頂点1このサイズ
+
+	pDevice->SetIndices(g_pIndexBuffer); // 描画したいポリゴンのインデックス
+
+	pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, pv, sizeof(Vertex2D));
+}
+
 //====================================================
 // BG用スプライト描画
 // 　tx, ty テクスチャ左上座標　　tw, th 表示スプライトサイズ

@@ -19,7 +19,9 @@
 #include "input.h"
 #include "sound.h"
 #include "game.h"
+#include "bg.h"
 #include "player.h"
+#include "arrow.h"
 
 //====================================================
 // 定数定義
@@ -183,10 +185,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_CLOSE:
+		ShowCursor(true);
 		if (MessageBox(hWnd, "本当に終了してよろしいですか？", "確認", MB_OKCANCEL | MB_DEFBUTTON2) == IDOK)
 		{
 			DestroyWindow(hWnd); // 指定のウィンドウにWM_DESTROYメッセージを送る
 		}
+		ShowCursor(false);
 		return 0; // DefWindowProc関数にメッセージを流さず終了することによって何もなかったことにする
 
 	case WM_DESTROY: // ウィンドウの破棄メッセージ

@@ -35,11 +35,7 @@ DWORD g_aSizeAudio[SOUND_LABEL_MAX] = {}; // オーディオデータサイズ
 // 各音素材のパラメータ
 SOUNDPARAM g_aParam[SOUND_LABEL_MAX] =
 {
-	//{"asset/sound/BGM000_skyairship.wav", -1}, // BGM0
-	//{"asset/sound/BGM001_departure.wav", -1},  // BGM1
-	//{"asset/sound/shot000.wav", 0},            // 弾発射音
-	//{"asset/sound/isshot.wav", 0},             // ショット命中
-	//{"asset/sound/explosion000.wav", 0},       // 爆発音
+	{"asset/sound/shot00.wav", 0},            // 弓発射音
 };
 
 //====================================================
