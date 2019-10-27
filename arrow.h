@@ -24,22 +24,25 @@ public:
 	bool beShotted;            // 発射フラグ
 	D3DXVECTOR3 pos;           // 表示座標
 	D3DXVECTOR3 direction;     // 矢の向き
-	D3DXVECTOR3 speed;         // 矢の速度
+	D3DXVECTOR3 move;          // 矢の移動量
 	D3DXVECTOR3 degree;        // 発射角度
 	D3DCOLOR color;	           // カラー
 	TextureIndex TextureIndex; // テクスチャID
 	int	tx, ty;	               // テクスチャ貼り付け左上座標
 	int	tw, th;	               // テクスチャ貼り付けサイズ
+	int charge;                // 矢に与えられた力
+	static int cnt;            // 矢の数のカウンタ
 
 	Arrow();
 	~Arrow();
 	void Arrow_Direction_Normalize(); // 向きベクトルの取得と正規化
+	static void Print(); // 残りの本数の表示
 };
 
 void Arrow_Initialize(); // ARROWの初期化
 void Arrow_Finalize(); // ARROWの終了処理
 void Arrow_Update(); // ARROWの更新
 void Arrow_Draw(); // ARROWの描画
-void Create_Arrow(); // ARROWの作成
+void Create_Arrow(); // ARROWの生成
 Arrow* GetArrow(); // ARROWの情報取得
 #endif

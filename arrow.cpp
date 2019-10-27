@@ -1,13 +1,15 @@
 #include "arrow.h"
 #include "player.h"
 #include "input.h"
+#include "debug_font.h"
 
 Arrow arrow[ARROW_MAX];
+int Arrow::cnt = 0;
 
 // ARROWの初期化
 void Arrow_Initialize()
 {
-	Create_Arrow();
+
 }
 
 // ARROWの終了処理
@@ -19,10 +21,6 @@ void Arrow_Finalize()
 // ARROWの更新
 void Arrow_Update()
 {
-	if (Keyboard_IsPress(DIK_SPACE))
-	{
-		Create_Arrow();
-	}
 	for (int i = 0; i < ARROW_MAX; i++)
 	{
 		if (arrow[i].bUse)
@@ -36,16 +34,13 @@ void Arrow_Update()
 			// 発射されたら
 			else
 			{
-				// プレイヤー情報の取得
-				Player *player = GetPlayer();
-
 				// 速度更新
-				arrow[i].speed.x = ARROW_SPEED * arrow[i].direction.x * player->charge_span;
-				arrow[i].speed.y = ARROW_SPEED * arrow[i].direction.y * player->charge_span;
+				arrow[i].move.x = ARROW_SPEED * arrow[i].direction.x * arrow[i].charge;
+				arrow[i].move.y = ARROW_SPEED * arrow[i].direction.y * arrow[i].charge;
 
 				// 位置更新
-				arrow[i].pos.x += arrow[i].speed.x;
-				arrow[i].pos.y += arrow[i].speed.y;
+				arrow[i].pos.x += arrow[i].move.x;
+				arrow[i].pos.y += arrow[i].move.y;
 
 				// 画面外チェック
 				if (arrow[i].pos.x >= SCREEN_WIDTH || arrow[i].pos.x <= 0 || arrow[i].pos.y >= SCREEN_HEIGHT || arrow[i].pos.y <= 0)
@@ -88,9 +83,10 @@ void Arrow_Draw()
 				arrow[i].pos.x, arrow[i].pos.y,
 				arrow[i].tx, arrow[i].ty,
 				arrow[i].tw, arrow[i].th,
-				atan2f(arrow[i].direction.y, arrow[i].direction.x));
+				arrow[i].degree.z);
 		}
 	}
+	Arrow::Print();
 }
 
 // ARROWの作成
@@ -98,12 +94,13 @@ void Create_Arrow()
 {
 	for (int i = 0; i < ARROW_MAX; i++)
 	{
-		if (!arrow[i].bUse)
+		if (!arrow[i].bUse && Arrow::cnt < ARROW_MAX)
 		{
 			arrow[i].bUse = true;
 			arrow[i].pos.x = ARROW_X;
 			arrow[i].pos.y = ARROW_Y;
 			arrow[i].Arrow_Direction_Normalize();
+			Arrow::cnt++;
 			break;
 		}
 	}
@@ -125,6 +122,7 @@ Arrow::Arrow()
 	ty = 0;
 	tw = Texture_GetWidth(TextureIndex) / 2;
 	th = Texture_GetHeight(TextureIndex);
+	charge = 0;
 }
 
 Arrow::~Arrow()
@@ -146,4 +144,10 @@ void Arrow::Arrow_Direction_Normalize()
 	len = sqrtf(direction.x * direction.x + direction.y * direction.y);
 	direction.x = direction.x / len;
 	direction.y = direction.y / len;
+	degree.z = atan2f(direction.y, direction.x);
+}
+
+void Arrow::Print()
+{
+	DebugFont_Draw(2, 32, "残りの本数: %d", ARROW_MAX - Arrow::cnt);
 }

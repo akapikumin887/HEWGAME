@@ -1,18 +1,18 @@
 #include "bg.h"
 #include "debug_font.h"
 
-BG *bg01;
+BG bg01;
 
 // BGの初期化
 void BG_Initialize()
 {
-	bg01 = new BG;
+	
 }
 
 // BGの終了処理
 void BG_Finalize()
 {
-	delete bg01;
+	
 }
 
 // BGの更新
@@ -40,15 +40,15 @@ void BG_Draw()
 	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	// テクスチャ拡大フィルタモードを設定
 
 	//スプライト描画
-	if (bg01->bUse)//使用中なら処理
+	if (bg01.bUse)//使用中なら処理
 	{
-		Sprite_SetColor(bg01->color);//色のセット
+		Sprite_SetColor(bg01.color);//色のセット
 		//スプライト描画
-		Sprite_Draw(bg01->TextureIndex,
-			bg01->pos.x, bg01->pos.y,
-			bg01->tx, bg01->ty,
-			bg01->tw, bg01->th);
-		//DebugFont_Draw(2, 2, "x: %.2lf y: %.2lf", bg01->pos.x, bg01->pos.y);
+		Sprite_Draw(bg01.TextureIndex,
+			bg01.pos.x, bg01.pos.y,
+			bg01.tx, bg01.ty,
+			bg01.tw, bg01.th);
+		//DebugFont_Draw(2, 2, "x: %.2lf y: %.2lf", bg01.pos.x, bg01.pos.y);
 	}
 }
 

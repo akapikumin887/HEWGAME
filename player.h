@@ -19,15 +19,14 @@ class Player
 public:
 	bool bUse;                 // 使用中フラグ
 	bool isShot;               // 発射フラグ
+	bool prepare;              // 構えフラグ
 	D3DXVECTOR3 pos;           // 発射始点位置情報
-	D3DXVECTOR3 degree;        // 発射角度
 	D3DCOLOR color;	           // カラー
 	TextureIndex TextureIndex; // テクスチャID
 	int	tx, ty;	               // テクスチャ貼り付け左上座標
 	int	tw, th;	               // テクスチャ貼り付けサイズ
 	int power;                 // 弓を引く力
 	int	charge_span;           // チャージ間隔
-	
 
 	Player();
 	~Player();

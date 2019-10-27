@@ -27,7 +27,7 @@
 // 定数定義
 //====================================================
 #define CLASS_NAME     "GameWindow"       // ウインドウクラスの名前
-#define WINDOW_CAPTION "STG  KeyでGameScene CKeyでTitleScene  ZKeyで弾発射　矢印キーで移動" // ウィンドウの名前
+#define WINDOW_CAPTION "Mouseで移動 Spaceで矢を生成 Zで弓を引く Xで発射" // ウィンドウの名前
 #define FPS_MEASUREMENT_TIME (1.0f)       // FPS計測時間
 #define FPS_STANTARD 60.0f
 
