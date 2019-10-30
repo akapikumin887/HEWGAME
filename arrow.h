@@ -34,6 +34,7 @@ public:
 	int	tw, th;	               // テクスチャ貼り付けサイズ
 	int charge;                // 矢に与えられた力
 	static int cnt;            // 矢の数のカウンタ
+	static int shot_cnt;       // 発射カウント
 
 	Arrow();
 	~Arrow();

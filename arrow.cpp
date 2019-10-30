@@ -4,32 +4,39 @@
 #include "player.h"
 #include "target.h"
 #include "score.h"
+#include "mode.h"
+#include "wind.h"
 
 static Arrow arrow[ARROW_MAX];
 int Arrow::cnt = 0;
-static Target *target = GetTarget();
+int Arrow::shot_cnt = 0;
+static Target *target;
+static Wind *wind;
 
 // ARROWの初期化
 void Arrow_Initialize()
 {
-
+	target = GetTarget();
+	wind = GetWind();
 }
 
 // ARROWの終了処理
 void Arrow_Finalize()
 {
+	Arrow::cnt = 0;
+	Arrow::shot_cnt = 0;
 
+	for (int i = 0; i < ARROW_MAX; i++)
+	{
+		arrow[i].bUse = false;
+		arrow[i].beShotted = false;
+		arrow[i].hit = false;
+	}
 }
 
 // ARROWの更新
 void Arrow_Update()
-{
-	// シーン遷移
-	if (Arrow::cnt == 5)
-	{
-		SetScene(SCENE_RESULT);
-	}
-	
+{	
 	for (int i = 0; i < ARROW_MAX; i++)
 	{
 		if (arrow[i].bUse)
@@ -51,7 +58,7 @@ void Arrow_Update()
 					arrow[i].move.y = ARROW_SPEED * arrow[i].direction.y * arrow[i].charge;
 
 					// 矢の尾の位置更新
-					arrow[i].posTail.x += arrow[i].move.x;
+					arrow[i].posTail.x += (arrow[i].move.x + wind->WindSpeed.x);
 					arrow[i].posTail.y += arrow[i].move.y;
 
 					// 矢の先頭の位置更新
@@ -62,6 +69,7 @@ void Arrow_Update()
 					{
 						arrow[i].bUse = false;
 						arrow[i].beShotted = false;
+						Arrow::shot_cnt++;
 					}
 
 					// 当たり判定
@@ -75,6 +83,7 @@ void Arrow_Update()
 							{
 								// 命中
 								arrow[i].hit = true;
+								Arrow::shot_cnt++;
 								if (j == 0)
 								{
 									Add_Score(5);
@@ -89,6 +98,12 @@ void Arrow_Update()
 				}
 			}
 		}
+	}
+
+	// シーン遷移
+	if (Arrow::shot_cnt == 5)
+	{
+		SetScene(SCENE_RESULT);
 	}
 }
 

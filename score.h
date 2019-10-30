@@ -12,9 +12,17 @@
 #ifndef Score_H_
 #define Score_H_
 
+class Score
+{
+public:
+	int score;
+	int rank;
+};
+
 void Score_Initialize(); // Score‚Ì‰Šú‰»
 void Score_Finalize(); // Score‚ÌI—¹ˆ—
 void Score_Update(); // Score‚ÌXV
 void Score_Draw(); // Score‚Ì•`‰æ
 void Add_Score(int s); // Score‚Ì‰ÁZ
+int* GetScore(); // Score‚Ìæ“¾
 #endif

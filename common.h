@@ -10,9 +10,11 @@
 typedef enum {
 	SCENE_NONE,
 	SCENE_TITLE,
+	SCENE_MODE,
 	SCENE_GAME,
 	SCENE_RESULT,
 }SCENE;
 
 void SetScene(SCENE s);
+SCENE GetScene();
 #endif

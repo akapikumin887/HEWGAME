@@ -9,8 +9,14 @@
 #include "sprite.h"
 #include "texture.h"
 
-#ifndef TITLE_H_
-#define TITLE_H_
+#ifndef MODE_H_
+#define MODE_H_
+
+typedef enum {
+	MODE_NONE,
+	MODE_EASY,
+	MODE_HARD
+}ModeIndex;
 
 class Mode
 {
@@ -30,4 +36,5 @@ void Mode_Initialize(); // Mode‚Ì‰Šú‰»
 void Mode_Finalize(); // Mode‚ÌI—¹ˆ—
 void Mode_Update(); // Mode‚ÌXV
 void Mode_Draw(); // Mode‚Ì•`‰æ
+ModeIndex GetMode(); // Modeî•ñ‚Ìæ“¾
 #endif

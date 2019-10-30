@@ -6,18 +6,21 @@
 #include "target.h"
 
 static Player player;
-static Target *target = GetTarget();
+static Target *target;
+static SCENE g_Scene;
 
 // Playerの初期化
 void Player_Initialize()
 {
-
+	target = GetTarget();
+	player.pos.x = SCREEN_WIDTH * 0.5f;
+	player.pos.y = SCREEN_HEIGHT * 0.5f;
 }
 
 // Playerの終了処理
 void Player_Finalize()
 {
-	
+	player.prepare = false;
 }
 
 // Playerの更新
@@ -28,6 +31,9 @@ void Player_Update()
 	player.pos.x += MouseState->lX;
 	player.pos.y += MouseState->lY;
 
+	// Scene情報の取得
+	g_Scene = GetScene();
+
 	//画面外処理
 	if ((player.pos.x - (float)player.tw / 2) <= 0.0f)
 	{
@@ -37,9 +43,19 @@ void Player_Update()
 	{
 		player.pos.x = (float)(SCREEN_WIDTH - player.tw / 2);
 	}
-	if ((player.pos.y - (float)player.th / 2) <= target->th * 4.0f)
+	if (g_Scene == SCENE_GAME)
 	{
-		player.pos.y = (float)player.th / 2 + target->th * 4.0f;
+		if ((player.pos.y - (float)player.th / 2) <= target->th * 4.0f)
+		{
+			player.pos.y = (float)player.th / 2 + target->th * 4.0f;
+		}
+	}
+	else
+	{
+		if ((player.pos.y - (float)player.th / 2) <= 0.0f)
+		{
+			player.pos.y = (float)player.th / 2;
+		}
 	}
 	if ((player.pos.y + (float)player.th / 2) >= SCREEN_HEIGHT)
 	{
@@ -133,7 +149,6 @@ Player::Player()
 	bUse = true; // 構造体使用中
 	isShot = false;
 	prepare = false;
-	pos.x = SCREEN_WIDTH * 0.5f; 
 	color = D3DCOLOR_RGBA(255, 255, 255, 255); // 色を適当に作る
 	TextureIndex = TEXTURE_INDEX_PLAYER;
 	tx = 0;

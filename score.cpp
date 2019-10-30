@@ -1,7 +1,7 @@
 #include "score.h"
 #include "debug_font.h"
 
-static int score;
+int score;
 
 // Scoreの初期化
 void Score_Initialize()
@@ -12,7 +12,7 @@ void Score_Initialize()
 // Scoreの終了処理
 void Score_Finalize()
 {
-
+	score = 0;
 }
 
 // Scoreの更新
@@ -31,4 +31,10 @@ void Score_Draw()
 void Add_Score(int s)
 {
 	score += s;
+}
+
+// スコアの取得
+int* GetScore()
+{
+	return &score;
 }

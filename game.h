@@ -2,6 +2,7 @@
 #include "player.h"
 #include "arrow.h"
 #include "target.h"
+#include "wind.h"
 #include "score.h"
 
 #ifndef GAME_H_

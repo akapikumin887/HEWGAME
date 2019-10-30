@@ -25,7 +25,9 @@
 #include "player.h"
 #include "arrow.h"
 #include "target.h"
+#include "wind.h"
 #include "score.h"
+#include "result.h"
 
 //====================================================
 // íËêîíËã`
@@ -225,7 +227,8 @@ bool Initialize(void)
 
 	Texture_Load();
 
-	SetScene(SCENE_GAME);
+	SetScene(SCENE_TITLE);
+	//SetScene(SCENE_MODE);
 
 	InitSound(g_hWnd);
 	
@@ -250,13 +253,16 @@ void Update(void)
 	switch (g_Scene)
 	{
 	case SCENE_TITLE:
-
+		Title_Update();
+		break;
+	case SCENE_MODE:
+		Mode_Update();
 		break;
 	case SCENE_GAME:
 		Game_Update();
 		break;
 	case SCENE_RESULT:
-
+		Result_Update();
 		break;
 	default:
 		break;
@@ -279,13 +285,16 @@ void Draw(void)
 	switch (g_Scene)
 	{
 	case SCENE_TITLE:
-
+		Title_Draw();
+		break;
+	case SCENE_MODE:
+		Mode_Draw();
 		break;
 	case SCENE_GAME:
 		Game_Draw();
 		break;
 	case SCENE_RESULT:
-
+		Result_Draw();
 		break;
 	default:
 		break;
@@ -325,13 +334,16 @@ void SetScene(SCENE s)
 	switch (g_Scene)
 	{
 	case SCENE_TITLE:
-
+		Title_Finalize();
+		break;
+	case SCENE_MODE:
+		Mode_Finalize();
 		break;
 	case SCENE_GAME:
 		Game_Finalize();
 		break;
 	case SCENE_RESULT:
-
+		Result_Finalize();
 		break;
 	default:
 		break;
@@ -340,16 +352,24 @@ void SetScene(SCENE s)
 	switch (s)
 	{
 	case SCENE_TITLE:
-
+		Title_Initialize();
+		break;
+	case SCENE_MODE:
+		Mode_Initialize();
 		break;
 	case SCENE_GAME:
 		Game_Initialize();
 		break;
 	case SCENE_RESULT:
-
+		Result_Initialize();
 		break;
 	default:
 		break;
 	}
 	g_Scene = s;
+}
+
+SCENE GetScene()
+{
+	return g_Scene;
 }

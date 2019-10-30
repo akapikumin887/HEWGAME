@@ -7,6 +7,7 @@ void Game_Initialize()
 	Player_Initialize();
 	Arrow_Initialize();
 	Target_Initialize();
+	Wind_Initialize();
 	Score_Initialize();
 }
 
@@ -17,6 +18,7 @@ void Game_Finalize()
 	Player_Finalize();
 	Arrow_Finalize();
 	Target_Finalize();
+	Wind_Finalize();
 }
 
 // GameÇÃçXêV
@@ -26,6 +28,7 @@ void Game_Update()
 	Player_Update();
 	Arrow_Update();
 	Target_Update();
+	Wind_Update();
 	Score_Update();
 }
 
@@ -36,5 +39,6 @@ void Game_Draw()
 	Player_Draw();
 	Arrow_Draw();
 	Target_Draw();
+	Wind_Draw();
 	Score_Draw();
 }
