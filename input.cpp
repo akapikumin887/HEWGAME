@@ -25,8 +25,8 @@ BYTE g_aKeyState[NUM_KEY_MAX]; // キーボードの入力情報ワーク
 BYTE g_aKeyStateTrigger[NUM_KEY_MAX]; // キーボードのトリガー情報ワーク
 BYTE g_aKeyStateRelease[NUM_KEY_MAX]; // キーボードのリリース情報ワーク
 LPDIRECTINPUTDEVICE8 g_pDevMouse = NULL; // 入力デバイス(マウス)へのポインタ
-DIMOUSESTATE g_zdiMouseState; // マウス状態
-DIMOUSESTATE g_zdiMouseState_bak; // マウス情報(変化検知用)
+DIMOUSESTATE g_MouseState; // マウス状態
+DIMOUSESTATE g_MouseState_bak; // マウス情報(変化検知用)
 
 //====================================================
 // 入力処理の初期化
@@ -239,14 +239,14 @@ void Mouse_Finalize(void)
 void Mouse_Update(void)
 {	
 	// デバイスからデータを取得
-	if (FAILED(g_pDevMouse->GetDeviceState(sizeof(DIMOUSESTATE), &g_zdiMouseState)))
+	if (FAILED(g_pDevMouse->GetDeviceState(sizeof(DIMOUSESTATE), &g_MouseState)))
 	{
 		g_pDevMouse->Acquire();
-		g_pDevMouse->GetDeviceState(sizeof(DIMOUSESTATE), &g_zdiMouseState);
+		g_pDevMouse->GetDeviceState(sizeof(DIMOUSESTATE), &g_MouseState);
 	}
 }
 
 DIMOUSESTATE* GetMouseState(void)
 {
-	return &g_zdiMouseState;
+	return &g_MouseState;
 }

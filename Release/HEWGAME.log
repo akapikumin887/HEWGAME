@@ -1,7 +1,11 @@
 ﻿  arrow.cpp
+  bg.cpp
+  game.cpp
+  main.cpp
+  player.cpp
   コード生成しています。
-  13 of 84 functions (15.5%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+  20 of 88 functions (22.7%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    5 functions had inline decision re-evaluated but remain unchanged
   コード生成が終了しました。
-  HEWGAME.vcxproj -> C:\Users\XUWENJIE\Documents\HAL\HEWGAMEedit\Release\HEWGAME.exe
+  HEWGAME.vcxproj -> D:\HAL\HEW\HEWGAMEedit\Release\HEWGAME.exe

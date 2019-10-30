@@ -1,6 +1,8 @@
 #include "bg.h"
 #include "player.h"
 #include "arrow.h"
+#include "target.h"
+#include "score.h"
 
 #ifndef GAME_H_
 #define GAME_H_

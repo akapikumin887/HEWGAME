@@ -89,7 +89,7 @@ void Sprite_Draw(TextureIndex texture_index,float dx, float dy, int tx,int ty, i
 	float u[2], v[2];
 	u[0] = (float)tx / w;
 	v[0] = (float)ty / h;
-	u[1] = (float)(tx+tw) / w;
+	u[1] = (float)(tx + tw) / w;
 	v[1] = (float)(ty + th) / h; // ピクセル座標をテクスチャ座標に変換
 
 	Vertex2D* pv; // 頂点配列のポインタの入れ物

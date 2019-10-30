@@ -1,13 +1,18 @@
 #include "arrow.h"
-#include "player.h"
 #include "input.h"
+#include "debug_font.h"
+#include "player.h"
+#include "target.h"
+#include "score.h"
 
-Arrow arrow[ARROW_MAX];
+static Arrow arrow[ARROW_MAX];
+int Arrow::cnt = 0;
+static Target *target = GetTarget();
 
 // ARROWの初期化
 void Arrow_Initialize()
 {
-	Create_Arrow();
+
 }
 
 // ARROWの終了処理
@@ -19,10 +24,12 @@ void Arrow_Finalize()
 // ARROWの更新
 void Arrow_Update()
 {
-	if (Keyboard_IsPress(DIK_SPACE))
+	// シーン遷移
+	if (Arrow::cnt == 5)
 	{
-		Create_Arrow();
+		SetScene(SCENE_RESULT);
 	}
+	
 	for (int i = 0; i < ARROW_MAX; i++)
 	{
 		if (arrow[i].bUse)
@@ -35,23 +42,50 @@ void Arrow_Update()
 			}
 			// 発射されたら
 			else
-			{
-				// プレイヤー情報の取得
-				Player *player = GetPlayer();
-
-				// 速度更新
-				arrow[i].speed.x = ARROW_SPEED * arrow[i].direction.x * player->charge_span;
-				arrow[i].speed.y = ARROW_SPEED * arrow[i].direction.y * player->charge_span;
-
-				// 位置更新
-				arrow[i].pos.x += arrow[i].speed.x;
-				arrow[i].pos.y += arrow[i].speed.y;
-
-				// 画面外チェック
-				if (arrow[i].pos.x >= SCREEN_WIDTH || arrow[i].pos.x <= 0 || arrow[i].pos.y >= SCREEN_HEIGHT || arrow[i].pos.y <= 0)
+			{   
+				// 命中していない
+				if (!arrow[i].hit)
 				{
-					arrow[i].bUse = false;
-					arrow[i].beShotted = false;
+					// 速度更新
+					arrow[i].move.x = ARROW_SPEED * arrow[i].direction.x * arrow[i].charge;
+					arrow[i].move.y = ARROW_SPEED * arrow[i].direction.y * arrow[i].charge;
+
+					// 矢の尾の位置更新
+					arrow[i].posTail.x += arrow[i].move.x;
+					arrow[i].posTail.y += arrow[i].move.y;
+
+					// 矢の先頭の位置更新
+					arrow[i].Arrow_Head_Pos();
+
+					// 画面外チェック
+					if (arrow[i].posTail.x >= SCREEN_WIDTH || arrow[i].posTail.x <= 0 || arrow[i].posTail.y >= SCREEN_HEIGHT || arrow[i].posTail.y <= 0)
+					{
+						arrow[i].bUse = false;
+						arrow[i].beShotted = false;
+					}
+
+					// 当たり判定
+					for (int j = 0; j < 3; j++)
+					{
+						// 縦判定
+						if (arrow[i].posHead.y <= target[j].pos.y + target[j].th / 2)
+						{
+							// 横判定
+							if (arrow[i].posHead.x >= target[j].pos.x - target[j].tw / 2 && arrow[i].posHead.x <= target[j].pos.x + target[j].tw / 2)
+							{
+								// 命中
+								arrow[i].hit = true;
+								if (j == 0)
+								{
+									Add_Score(5);
+								}
+								else
+								{
+									Add_Score(1);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -65,13 +99,13 @@ void Arrow_Draw()
 
 	for (int i = 0; i < ARROW_MAX; i++)
 	{
-		//スプライト描画
-		if (arrow[i].bUse)//使用中なら処理
+		// スプライト描画
+		if (arrow[i].bUse) // 使用中なら処理
 		{
-			//テクスチャのセット
+			// テクスチャのセット
 			pDevice->SetTexture(0, Texture_GetTexture(arrow[i].TextureIndex));
 
-			//ブレンド設定
+			// ブレンド設定
 			pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);			// αブレンドを行う
 			pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// αソースカラーの指定
 			pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// αデスティネーションカラーの指定
@@ -81,16 +115,17 @@ void Arrow_Draw()
 			pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	// テクスチャ縮小フィルタモードを設定
 			pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	// テクスチャ拡大フィルタモードを設定
 
-			Sprite_SetColor(arrow[i].color);//色のセット
+			Sprite_SetColor(arrow[i].color); // 色のセット
 
-			//スプライト描画
+			// スプライト描画
 			Sprite_Draw_Rotation_Arrow(arrow[i].TextureIndex,
-				arrow[i].pos.x, arrow[i].pos.y,
+				arrow[i].posTail.x, arrow[i].posTail.y,
 				arrow[i].tx, arrow[i].ty,
 				arrow[i].tw, arrow[i].th,
-				atan2f(arrow[i].direction.y, arrow[i].direction.x));
+				arrow[i].degree.z);
 		}
 	}
+	Arrow::Print();
 }
 
 // ARROWの作成
@@ -98,12 +133,13 @@ void Create_Arrow()
 {
 	for (int i = 0; i < ARROW_MAX; i++)
 	{
-		if (!arrow[i].bUse)
+		if (!arrow[i].bUse && Arrow::cnt < ARROW_MAX)
 		{
 			arrow[i].bUse = true;
-			arrow[i].pos.x = ARROW_X;
-			arrow[i].pos.y = ARROW_Y;
+			arrow[i].posTail.x = ARROW_X;
+			arrow[i].posTail.y = ARROW_Y;
 			arrow[i].Arrow_Direction_Normalize();
+			Arrow::cnt++;
 			break;
 		}
 	}
@@ -119,12 +155,14 @@ Arrow::Arrow()
 {
 	bUse = false;
 	beShotted = false;
+	hit = false;
 	color = D3DCOLOR_RGBA(255, 255, 255, 255); // 色を適当に作る
 	TextureIndex = TEXTURE_INDEX_ARROW01;
-	tx = Texture_GetWidth(TextureIndex) / 8;
+	tx = Texture_GetWidth(TextureIndex);
 	ty = 0;
-	tw = Texture_GetWidth(TextureIndex) / 2;
+	tw = Texture_GetWidth(TextureIndex);
 	th = Texture_GetHeight(TextureIndex);
+	charge = 0;
 }
 
 Arrow::~Arrow()
@@ -139,11 +177,23 @@ void Arrow::Arrow_Direction_Normalize()
 	float len;
 
 	// 矢の発射ベクトル更新
-	direction.x = player->pos.x - pos.x;
-	direction.y = player->pos.y - pos.y;
+	direction.x = player->pos.x - posTail.x;
+	direction.y = player->pos.y - posTail.y;
 
 	// 向きベクトルの正規化
 	len = sqrtf(direction.x * direction.x + direction.y * direction.y);
 	direction.x = direction.x / len;
 	direction.y = direction.y / len;
+	degree.z = atan2f(direction.y, direction.x);
+}
+
+void Arrow::Arrow_Head_Pos()
+{
+	posHead.x = posTail.x + Texture_GetWidth(TextureIndex) * direction.x;
+	posHead.y = posTail.y + Texture_GetWidth(TextureIndex) * direction.y;
+}
+
+void Arrow::Print()
+{
+	DebugFont_Draw(2, 32, "残りの本数: %d", ARROW_MAX - Arrow::cnt);
 }
