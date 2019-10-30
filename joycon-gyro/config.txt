@@ -8,11 +8,7 @@ quickToggleGyro: "0"
 invertQuickToggle: "0"
 dolphinPointerMode: "0"
 gyroscopeComboCode: "-1"
-<<<<<<< HEAD
 marioTheme: "0"
-=======
-marioTheme: "1"
->>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83
 reverseX: "0"
 reverseY: "1"
 debugMode: "0"
@@ -21,8 +17,4 @@ forcePollUpdate: "0"
 broadcastMode: "0"
 host: "https://twitchplaysnintendoswitch.com:8110"
 writeCastToFile: "0"
-<<<<<<< HEAD
 autoStart: "0"
-=======
-autoStart: "1"
->>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83

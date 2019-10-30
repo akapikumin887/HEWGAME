@@ -38,10 +38,7 @@ public:
 	Arrow();
 	~Arrow();
 	void Arrow_Direction_Normalize(); // 向きベクトルの取得と正規化
-<<<<<<< HEAD
 	void Arrow_Head_Pos(); // 矢の先頭座標の取得
-=======
->>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83
 	static void Print(); // 残りの本数の表示
 };
 

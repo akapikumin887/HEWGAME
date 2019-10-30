@@ -5,12 +5,8 @@
 #include "arrow.h"
 #include "target.h"
 
-<<<<<<< HEAD
 static Player player;
 static Target *target = GetTarget();
-=======
-Player player;
->>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83
 
 // Playerの初期化
 void Player_Initialize()
@@ -41,15 +37,9 @@ void Player_Update()
 	{
 		player.pos.x = (float)(SCREEN_WIDTH - player.tw / 2);
 	}
-<<<<<<< HEAD
 	if ((player.pos.y - (float)player.th / 2) <= target->th * 4.0f)
 	{
 		player.pos.y = (float)player.th / 2 + target->th * 4.0f;
-=======
-	if ((player.pos.y - (float)player.th / 2) <= 0.0f)
-	{
-		player.pos.y = (float)player.th / 2;
->>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83
 	}
 	if ((player.pos.y + (float)player.th / 2) >= SCREEN_HEIGHT)
 	{
@@ -106,11 +96,7 @@ void Player_Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = Mydirect3D_GetDevice();
 
-<<<<<<< HEAD
 	// テクスチャのセット
-=======
-	//テクスチャのセット
->>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83
 	pDevice->SetTexture(0, Texture_GetTexture(player.TextureIndex));
 
 	// ブレンド設定
@@ -123,19 +109,11 @@ void Player_Draw()
 	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	// テクスチャ縮小フィルタモードを設定
 	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	// テクスチャ拡大フィルタモードを設定
 
-<<<<<<< HEAD
 	// スプライト描画
 	if (player.bUse) // 使用中なら処理
 	{
 		Sprite_SetColor(player.color); // 色のセット
 		// スプライト描画
-=======
-	//スプライト描画
-	if (player.bUse)//使用中なら処理
-	{
-		Sprite_SetColor(player.color);//色のセット
-		//スプライト描画
->>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83
 		Sprite_Draw(player.TextureIndex,
 			player.pos.x, player.pos.y,
 			player.tx, player.ty,
