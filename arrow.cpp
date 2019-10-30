@@ -1,6 +1,7 @@
 #include "arrow.h"
 #include "input.h"
 #include "debug_font.h"
+<<<<<<< HEAD
 #include "player.h"
 #include "target.h"
 #include "score.h"
@@ -8,6 +9,11 @@
 static Arrow arrow[ARROW_MAX];
 int Arrow::cnt = 0;
 static Target *target = GetTarget();
+=======
+
+Arrow arrow[ARROW_MAX];
+int Arrow::cnt = 0;
+>>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83
 
 // ARROWの初期化
 void Arrow_Initialize()
@@ -24,12 +30,15 @@ void Arrow_Finalize()
 // ARROWの更新
 void Arrow_Update()
 {
+<<<<<<< HEAD
 	// シーン遷移
 	if (Arrow::cnt == 5)
 	{
 		SetScene(SCENE_RESULT);
 	}
 	
+=======
+>>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83
 	for (int i = 0; i < ARROW_MAX; i++)
 	{
 		if (arrow[i].bUse)
@@ -42,9 +51,23 @@ void Arrow_Update()
 			}
 			// 発射されたら
 			else
+<<<<<<< HEAD
 			{   
 				// 命中していない
 				if (!arrow[i].hit)
+=======
+			{
+				// 速度更新
+				arrow[i].move.x = ARROW_SPEED * arrow[i].direction.x * arrow[i].charge;
+				arrow[i].move.y = ARROW_SPEED * arrow[i].direction.y * arrow[i].charge;
+
+				// 位置更新
+				arrow[i].pos.x += arrow[i].move.x;
+				arrow[i].pos.y += arrow[i].move.y;
+
+				// 画面外チェック
+				if (arrow[i].pos.x >= SCREEN_WIDTH || arrow[i].pos.x <= 0 || arrow[i].pos.y >= SCREEN_HEIGHT || arrow[i].pos.y <= 0)
+>>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83
 				{
 					// 速度更新
 					arrow[i].move.x = ARROW_SPEED * arrow[i].direction.x * arrow[i].charge;
@@ -187,12 +210,15 @@ void Arrow::Arrow_Direction_Normalize()
 	degree.z = atan2f(direction.y, direction.x);
 }
 
+<<<<<<< HEAD
 void Arrow::Arrow_Head_Pos()
 {
 	posHead.x = posTail.x + Texture_GetWidth(TextureIndex) * direction.x;
 	posHead.y = posTail.y + Texture_GetWidth(TextureIndex) * direction.y;
 }
 
+=======
+>>>>>>> 38e7617f6fb0a07da2bbb813709ac1b856619b83
 void Arrow::Print()
 {
 	DebugFont_Draw(2, 32, "残りの本数: %d", ARROW_MAX - Arrow::cnt);
