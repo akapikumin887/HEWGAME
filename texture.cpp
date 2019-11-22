@@ -1,9 +1,8 @@
 #include <d3dx9.h>
 #include <d3d.h>
-#include "common.h"
 #include "mydirect3d.h"
 #include "texture.h"
-
+#include "common.h"
 
 #define TEXTURE_FILENAME_MAX (64)
 
@@ -17,14 +16,10 @@ typedef struct TextureFile_tag
 
 // テクスチャ配列
 static const TextureFile g_TextureFiles[] = {
-	{ "asset/texture/title.jpg", SCREEN_WIDTH, SCREEN_HEIGHT },
-	{ "asset/texture/mode_bg.tga", SCREEN_WIDTH, SCREEN_HEIGHT },
-	{ "asset/texture/mode_easy.tga", 510, 90 },
-	{ "asset/texture/mode_hard.tga", 510, 90 },
-	{ "asset/texture/BG01.jpg", SCREEN_WIDTH, SCREEN_HEIGHT },
-	{ "asset/texture/aiming.png", 60, 60 },
-	{ "asset/texture/arrow00.tga", 120, 120 },
-	{ "asset/texture/arrow01.tga", 150, 150 },
+	{ "asset/texture/KIZUNA.jpg", 256, 256 },
+	{ "asset/texture/airou.png", 256, 256 },
+	{ "asset/texture/aiming.png", 64, 64 },
+	{ "asset/texture/target.jpg", 512, 512 },
 	// ヘッダーで定義したenumと対応しているので数が異なったり定義名があらわす画像ファイルの順番が異なったりしないようにする
 };
 
@@ -42,7 +37,7 @@ g_pTextures[TEXTURE_FILE_COUNT];
 
 int Texture_Load(void)
 {
-	LPDIRECT3DDEVICE9 pDevice = Mydirect3D_GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 	if (!pDevice)return TEXTURE_FILE_COUNT; // ロードできなかった数を返す
 
 	int failed_count = 0; // ロードできなかった数

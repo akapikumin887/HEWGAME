@@ -1,14 +1,14 @@
-#include<windows.h>
-#include<d3d9.h>
-#include<d3dx9.h>
-#include<dxerr.h>
-#include<math.h>	
-#include"common.h"
+#include <windows.h>
+#include <d3d9.h>
+#include <d3dx9.h>
+#include <dxerr.h>
+#include <math.h>	
+#include "common.h"
 
 static LPDIRECT3D9 g_pD3D = NULL;
 static LPDIRECT3DDEVICE9 g_pD3DDevice = NULL;
 
-LPDIRECT3DDEVICE9 Mydirect3D_GetDevice(void)
+LPDIRECT3DDEVICE9 MyDirect3D_GetDevice(void)
 {
 	return g_pD3DDevice;
 }

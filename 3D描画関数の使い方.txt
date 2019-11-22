@@ -1,0 +1,18 @@
+﻿sprite.h において24行目でメンバー関数にしている。Plane地面　cube立方体(全て描画用)
+void CreatePlane(); // Plane（バッファ）の初期化、生成
+void CreateCube(); // Cube（バッファ）の初期化、生成
+g_pD3DVtxBuffCubeとg_pD3DVtxBuffPlaneに頂点座標法線反射光を入れる。
+
+sprite.cppの397行目の内容で床の座標を決めており、main.cppのDrawの291行目の場所で簡単に床の回転大きさ移動が可能である
+plane->Sprite_Draw_Plane(TEXTURE_INDEX_MAX, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(10.0f, 1.0f, 10.0f));
+plane->Sprite_Draw_Plane(TEXTURE_INDEX_MAX,  ポジション(x,    y,    z  ),         回転(x,    y,     z  ),      大きさ(x,    y,     z    ));
+
+
+
+main.cppの62行目からグローバル変数を宣言すればオブジェクトを生成できる。
+
+156行目のFPS_STANTARDは、60FPSでやっており変えたい場合は30行目で変えられる。
+
+カメラでソースが作ってあり、13行目の内容で変更可能
+
+シーンを追加するときは、common.h,main.cppのUpdate,Draw Setsceneで追加すること。

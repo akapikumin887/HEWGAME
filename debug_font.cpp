@@ -1,7 +1,7 @@
 #include <d3dx9.h>
 #include <stdio.h>
-#include "common.h"
 #include "mydirect3d.h"
+#include "common.h"
 
 //====================================================
 // íËêîíËã`
@@ -24,7 +24,7 @@ void DebugFont_Initialize(void)
 {
 #if defined(_DEBUG) || defined(DEBUG)
 
-	LPDIRECT3DDEVICE9 pDevice = Mydirect3D_GetDevice();
+	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 
 	D3DXCreateFont(pDevice,
 		24, 0, 0, 0,

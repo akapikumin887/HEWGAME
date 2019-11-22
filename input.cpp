@@ -24,6 +24,7 @@ LPDIRECTINPUTDEVICE8 g_pDevKeyboard = NULL; // “ü—ÍƒfƒoƒCƒX(ƒL[ƒ{[ƒh)‚Ö‚Ìƒ|ƒCƒ
 BYTE g_aKeyState[NUM_KEY_MAX]; // ƒL[ƒ{[ƒh‚Ì“ü—Íî•ñƒ[ƒN
 BYTE g_aKeyStateTrigger[NUM_KEY_MAX]; // ƒL[ƒ{[ƒh‚ÌƒgƒŠƒK[î•ñƒ[ƒN
 BYTE g_aKeyStateRelease[NUM_KEY_MAX]; // ƒL[ƒ{[ƒh‚ÌƒŠƒŠ[ƒXî•ñƒ[ƒN
+
 LPDIRECTINPUTDEVICE8 g_pDevMouse = NULL; // “ü—ÍƒfƒoƒCƒX(ƒ}ƒEƒX)‚Ö‚Ìƒ|ƒCƒ“ƒ^
 DIMOUSESTATE g_MouseState; // ƒ}ƒEƒXó‘Ô
 DIMOUSESTATE g_MouseState_bak; // ƒ}ƒEƒXî•ñ(•Ï‰»ŒŸ’m—p)
@@ -237,7 +238,7 @@ void Mouse_Finalize(void)
 // ƒ}ƒEƒX‚ÌXVˆ—
 //====================================================
 void Mouse_Update(void)
-{	
+{
 	// ƒfƒoƒCƒX‚©‚çƒf[ƒ^‚ðŽæ“¾
 	if (FAILED(g_pDevMouse->GetDeviceState(sizeof(DIMOUSESTATE), &g_MouseState)))
 	{
