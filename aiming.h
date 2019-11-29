@@ -9,6 +9,7 @@
 #include "system_timer.h"
 #include "sprite.h"
 #include "texture.h"
+#include "ui.h"
 
 #ifndef AIMING_H_
 #define AIMING_H_
@@ -18,13 +19,13 @@
 #define AIMING_Z 5.0f
 #define AIMING_MAG_Z 6.0f
 #define CHARGE_SPAN 50
-#define TIME_COUNT_MAX 10.0f
+#define TIME_COUNT_MAX 15.0f
 
 class Aiming
 {
 public:
 	VERTEX_3D *aimingv;         // 頂点情報
-	Time *timec;                // 時間情報
+	Timer *time_cnt;             // 時間情報
 	D3DXVECTOR3 pos;            // 位置
 	D3DXVECTOR3 rot;            // 回転
 	D3DXVECTOR3 scl;            // 大きさ
@@ -44,7 +45,12 @@ public:
 	void Set_Aiming(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, // Aimingのテクスチャ・位置・向き（回転）・大きさの設定
 		bool Revolution = false, D3DXVECTOR3 RevRadius = D3DXVECTOR3(0, 0, 0), D3DXVECTOR3 RevSpd = D3DXVECTOR3(0, 0, 0)); // Aimingの公転フラグ・公転半径・公転速度の設定
 	float Rotation_Correction(float r); // Aimingの回転の補正
-	void TimeCount_On(); // 時間をカウント
+};
+
+class AimingTime :public Alphabet
+{
+public:
+	char ta[8];
 };
 
 void Aiming_Initialize(); // Aimingの初期化

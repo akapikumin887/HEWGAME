@@ -20,7 +20,9 @@ static D3DXMATRIX g_mtxWorld; // ワールドマトリックス
 static D3DXMATRIX g_mtxGWorld;
 static LPDIRECT3DVERTEXBUFFER9 g_pD3DVtxBufferCube = NULL; // Cube頂点バッファ
 static LPDIRECT3DVERTEXBUFFER9 g_pD3DVtxBufferFace = NULL; // Face頂点バッファ
+static LPDIRECT3DVERTEXBUFFER9 g_pD3DVtxBufferFaceEX = NULL; // Face頂点バッファEX
 static LPDIRECT3DINDEXBUFFER9 g_pD3DIdxBufferFace = NULL;
+static LPDIRECT3DINDEXBUFFER9 g_pD3DIdxBufferFaceEX = NULL;
 static LPDIRECT3DINDEXBUFFER9 g_pD3DIdxBuffer = NULL;
 
 //====================================================
@@ -342,6 +344,18 @@ void Sprite_Finalize_3D()
 		g_pD3DIdxBufferFace->Release(); // インターフェースの解放
 		g_pD3DIdxBufferFace = NULL;
 	}
+
+	if (g_pD3DVtxBufferFaceEX)
+	{
+		g_pD3DVtxBufferFaceEX->Release();
+		g_pD3DVtxBufferFaceEX = NULL;
+	}
+
+	if (g_pD3DIdxBufferFaceEX != NULL)
+	{
+		g_pD3DIdxBufferFaceEX->Release(); // インターフェースの解放
+		g_pD3DIdxBufferFaceEX = NULL;
+	}
 }
 
 // Face（バッファ）の生成
@@ -481,7 +495,7 @@ void CreateCube()
 		pVtx[i].nor = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
 
 		//反射光の設定
-		pVtx[i].diffuse = D3DXCOLOR(0.3f, 0.3f, 0.3f, 1.0f);
+		pVtx[i].diffuse = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
 	}
 
 	for (int i = 0; i < 36; i += 6)
@@ -550,6 +564,59 @@ void VERTEX_3D::Sprite_Draw_Face(TextureIndex texture_index, D3DXVECTOR3 pos, D3
 	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, 4, 0, 2);
 }
 
+void VERTEX_3D::Sprite_Draw_FaceEX(TextureIndex texture_index, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl, D3DXVECTOR3 size, D3DXVECTOR3 size_nor, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd)
+{
+	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
+	D3DXMATRIX mtxScl; // スケーリング行列
+	D3DXMATRIX mtxRot; // 回転行列
+	D3DXMATRIX mtxTrs; // 平行移動行列
+	int kx = (int)(size.x / size_nor.x);
+	int kz = (int)(size.z / size_nor.z);
+
+	D3DXMatrixIdentity(&g_mtxWorld); // ワールド行列を単位行列に初期化
+
+	// スケール行列を作成＆ワールド行列へ合成
+	D3DXMatrixScaling(&mtxScl, scl.x, scl.y, scl.z);
+	D3DXMatrixMultiply(&g_mtxWorld, &g_mtxWorld, &mtxScl); // World * Scaling
+
+	// 回転行列を作成＆ワールド行列へ合成
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, D3DXToRadian(rot.y), D3DXToRadian(rot.x), D3DXToRadian(rot.z));
+	D3DXMatrixMultiply(&g_mtxWorld, &g_mtxWorld, &mtxRot); // World * Rotation
+
+	// 公転
+	if (Revolution)
+	{
+		// 平行移動行列を作成＆ワールド行列へ合成
+		D3DXMatrixTranslation(&mtxTrs, RevRadius.x, RevRadius.y, RevRadius.z);
+		D3DXMatrixMultiply(&g_mtxWorld, &g_mtxWorld, &mtxTrs); // World * Translation
+
+		// 回転行列を作成＆ワールド行列へ合成
+		D3DXMatrixRotationYawPitchRoll(&mtxRot, D3DXToRadian(RevSpd.y), D3DXToRadian(RevSpd.x), D3DXToRadian(RevSpd.z));
+		D3DXMatrixMultiply(&g_mtxWorld, &g_mtxWorld, &mtxRot); // World * Rotation
+	}
+
+	// 平行移動行列を作成＆ワールド行列へ合成
+	D3DXMatrixTranslation(&mtxTrs, pos.x, pos.y, pos.z);
+	D3DXMatrixMultiply(&g_mtxWorld, &g_mtxWorld, &mtxTrs); // World * Translation
+
+	// ワールドマトリックスを設定
+	pDevice->SetTransform(D3DTS_WORLD, &g_mtxWorld);
+
+	// 描画したいポリゴンの頂点バッファをデータストリーム（データの通り道）にセット
+	pDevice->SetStreamSource(0, g_pD3DVtxBufferFaceEX, 0, sizeof(VERTEX_3D));
+	pDevice->SetIndices(g_pD3DIdxBufferFaceEX);
+
+	// 描画したいポリゴンの頂点フォーマットの設定
+	pDevice->SetFVF(FVF_VERTEX_3D);
+
+	// ポリゴンの描画
+	pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);			// αブレンドを行う
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// αソースカラーの指定
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// αデスティネーションカラーの指定
+	pDevice->SetTexture(0, Texture_GetTexture(texture_index));
+	pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, ((3 + (kz * 2) - 1) * kx + 2 * (kx - 1)), 0, kz * kx * 2 + (kx - 1) * 2);
+}
+
 // Cubeの描画
 void VERTEX_3D::Sprite_Draw_Cube(TextureIndex texture_index, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd)
 {
@@ -610,4 +677,74 @@ float VERTEX_3D::Rotation_Correction(float r)
 		r += 360.0f;
 	}
 	return r;
+}
+
+// Face（バッファ）の生成(縮退ポリゴン)
+void CreateFaceEX(D3DXVECTOR3 sz, D3DXVECTOR3 szn)
+{
+	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
+
+	int kx = (int)(sz.x / szn.x); // 
+	int kz = (int)(sz.z / szn.z);
+	// オブジェクトの頂点バッファを生成
+	pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * ((kx + 1) * (kz + 1)), // 頂点データ用に確保するバッファサイズ（バイト単位）
+		D3DUSAGE_WRITEONLY,     // 頂点バッファの使用法
+		FVF_VERTEX_3D,          // 使用する頂点フォーマット
+		D3DPOOL_MANAGED,        // リソースのバッファを保持するメモリクラスを指定
+		&g_pD3DVtxBufferFaceEX, // 頂点バッファインターフェースへのポインタ
+		NULL);                  // NULLに設定
+
+	// 頂点バッファの中身を埋める
+	VERTEX_3D *pVtx;
+
+	// 頂点データの範囲をロックし、頂点バッファへのポインタを取得
+	g_pD3DVtxBufferFaceEX->Lock(0, 0, (void**)&pVtx, 0);
+
+	for (int i = 0; i < (kx + 1) * (kz + 1); i++)
+	{
+		// 頂点座標の設定
+		pVtx[i].vtx = D3DXVECTOR3((i % (kx + 1)) * szn.x - sz.x / 2.0f, 0.0f, sz.z / 2.0f - i / (kx + 1) * szn.z);
+
+		// 法線ベクトルの設定
+		pVtx[i].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+
+		//反射光の設定
+		pVtx[i].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+
+	// テクスチャ座標の設定
+	//pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
+	//pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
+	//pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
+	//pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+
+	//頂点データをアンロックする
+	g_pD3DVtxBufferFaceEX->Unlock();
+
+	// ストリップ用
+	pDevice->CreateIndexBuffer(sizeof(WORD) * ((3 + (kz * 2) - 1) * kx + 2 * (kx - 1)),
+		D3DUSAGE_WRITEONLY,
+		D3DFMT_INDEX16,
+		D3DPOOL_MANAGED,
+		&g_pD3DIdxBufferFaceEX,
+		NULL);
+
+	WORD* pIdx = NULL; // 配列の先頭ポインタの入れ物
+
+	g_pD3DIdxBufferFaceEX->Lock(0, 0, (void**)&pIdx, 0);
+
+	int count = 0;
+
+	for (int i = 0; i < kx; i++)
+	{
+		for (int j = 0; j < kz + 1; j++)
+		{
+			pIdx[count] = i + j * (kx + 1);
+			pIdx[count + 1] = pIdx[count] + 1;
+			count += 2;
+		}
+		pIdx[count] = pIdx[count - 1];
+		pIdx[count + 1] = pIdx[count - (kz + 1) * 2 + 1];
+	}
+	g_pD3DIdxBufferFaceEX->Unlock();
 }

@@ -1,19 +1,2 @@
-﻿  camera.cpp
-  cube.cpp
-  debug_font.cpp
-  game.cpp
-  HitCheck.cpp
-  input.cpp
-  light.cpp
-  main.cpp
-  mydirect3d.cpp
-  plane.cpp
-  sound.cpp
-  aiming.cpp
-  sprite.cpp
-  system_timer.cpp
-  target.cpp
-  texture.cpp
-  wall.cpp
-  コードを生成中...
-  BASE.vcxproj -> C:\Users\XUWENJIE\Documents\HAL\HEWGAME\Debug\BASE.exe
+﻿  aiming.cpp
+  BASE.vcxproj -> C:\Users\XUWENJIE\Documents\HAL\DX21\BASEDX\Debug\BASE.exe

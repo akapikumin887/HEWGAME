@@ -13,14 +13,11 @@
 #define CUBE_H_
 
 #define CUBE_MAX 5
-#define MOVE_SPEED 1.0f
+#define MOVE_SPEED 10.0f
 #define CUBE_X AIMING_X
 #define CUBE_Y 3.5f
 #define CUBE_Z AIMING_Z
-#define CUBE_MAG_Z 1.2f
-#define GRAVILITY -9.8f
-#define GRAVILITY_FORCE_MAG (FPS_STANTARD * 100)
-#define WIND_FORCE_MAG (FPS_STANTARD * 50)
+#define CUBE_MAG_Z 3.5f
 
 class Cube
 {
@@ -53,9 +50,11 @@ public:
 	void Set_Cube(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, // Cubeのテクスチャ・位置・回転・大きさの設定
 		bool Revolution = false, D3DXVECTOR3 RevRadius = D3DXVECTOR3(0, 0, 0), D3DXVECTOR3 RevSpd = D3DXVECTOR3(0, 0, 0)); // Cubeの公転フラグ・公転半径・公転速度の設定
 	void Cube_Aiming_Direction(); // Cubeの発射時の向き
-	void Cube_Move_Direction(D3DXVECTOR3 wind,float g = GRAVILITY / GRAVILITY_FORCE_MAG); // Cubeの発射時の向き
+	//void Cube_Move_Direction(D3DXVECTOR3 wind,float g = GRAVILITY / GRAVILITY_FORCE_MAG); // Cubeの発射時の向き
+	void Cube_Move_Direction(); // Cubeの発射時の向き
 	float Rotation_Correction(float r); // Cubeの回転の補正
 	float Get_Length(D3DXVECTOR3 l); // 長さの計算
+	void Score(); // Score判定
 };
 
 void Cube_Initialize(); // Cubeの初期化

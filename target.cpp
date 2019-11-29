@@ -7,7 +7,7 @@ static Target target;
 // TargetÇÃèâä˙âª
 void Target_Initialize()
 {
-	target.Set_Target(TEXTURE_INDEX_TARGET, D3DXVECTOR3(TARGET_X, TARGET_Y, TARGET_Z * TARGET_MAG_Z), D3DXVECTOR3(270.0f, 0.0f, 0.0f), D3DXVECTOR3(5.0f, 1.0f, 5.0f));
+	target.Set_Target(TEXTURE_INDEX_TARGET, D3DXVECTOR3(TARGET_X, TARGET_Y, TARGET_Z * TARGET_MAG_Z), D3DXVECTOR3(270.0f, 0.0f, 0.0f), D3DXVECTOR3(TARGET_SIZE, 1.0f, TARGET_SIZE));
 }
 
 // TargetÇÃèIóπèàóù
@@ -63,6 +63,16 @@ void Target::Set_Target(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r,
 	revolution = Revolution;
 	revRadius = RevRadius;
 	revSpd = RevSpd;
+	float c = TARGET_SIZE / 20;
+	circle[0] = c / 2;
+	for (int i = 1; i < 11; i++)
+	{
+		circle[i] = i * c;
+		if (i == 8)
+		{
+			circle[i] -= c / 5;
+		}
+	}
 }
 
 // TargetÇÃâÒì]ÇÃï‚ê≥

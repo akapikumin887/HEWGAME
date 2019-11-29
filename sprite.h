@@ -32,6 +32,10 @@ public:
 	void Sprite_Draw_Face(TextureIndex texture_index, // テクスチャの設定
 		D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl, // 位置・回転・大きさの設定
 		bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd); // 公転フラグ・公転半径・公転速度の設定
+	void Sprite_Draw_FaceEX(TextureIndex texture_index, // テクスチャの設定
+		D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl, // 位置・回転・大きさの設定
+		D3DXVECTOR3 size, D3DXVECTOR3 size_nor,
+		bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd); // 公転フラグ・公転半径・公転速度の設定
 	void Sprite_Draw_Cube(TextureIndex texture_index, // テクスチャの設定
 		D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl, // 位置・回転・大きさの設定
 		bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd); // 公転フラグ・公転半径・公転速度の設定
@@ -53,4 +57,5 @@ void CreateFace(); // Face（バッファ）の生成
 void CreateCube(); // Cube（バッファ）の生成
 void IndexBuffer_Initialize(); // IndexBufferの初期化
 void Index_Draw(TextureIndex texture_index, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd); // IndexBufferの描画
+void CreateFaceEX(D3DXVECTOR3 sz, D3DXVECTOR3 szn); // Face（バッファ）の生成(縮退ポリゴン)
 #endif 

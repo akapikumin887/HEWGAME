@@ -124,6 +124,11 @@ void Camera_Draw()
 	DebugFont_Draw(2, 62, "CameraRot:  x: %.2lf  y: %.2lf  z: %.2lf", camera->rotAt.x, camera->rotAt.y, camera->rotAt.z);
 }
 
+Camera* Get_Camera()
+{
+	return camera;
+}
+
 // Cameraの初期化（コンストラクタ）
 Camera::Camera()
 {
@@ -132,6 +137,9 @@ Camera::Camera()
 	posAt = D3DXVECTOR3(CAMERAAT_X, CAMERAAT_Y, CAMERAAT_Z);
 	vecUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	lenEyeToAt = EYETOATLEN;
+	bZoom_Back = false;
+	bZoom_Ready = false;
+	zoom_cnt = 0.0f;
 }
 
 // Cameraのリセット
@@ -140,6 +148,49 @@ void Camera::CameraReset()
 	rotAt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	posEye = D3DXVECTOR3(CAMERAEYE_X, CAMERAEYE_Y, CAMERAEYE_Z);
 	posAt = D3DXVECTOR3(CAMERAAT_X, CAMERAAT_Y, CAMERAAT_Z);
+}
+
+// Cameraのズーム前進
+void Camera::Camera_Zoom_Forward()
+{
+	if (zoom_cnt < ZOOM_MAX)
+	{
+		Reset_CameraEye();
+		zoom_cnt += ZOOM_INCREASING;
+		Set_CameraEye();
+	}
+}
+
+// Cameraのズーム後退
+void Camera::Camera_Zoom_Back()
+{
+	if (camera->bZoom_Back)
+	{
+		Reset_CameraEye();
+		zoom_cnt -= ZOOM_INCREASING;
+		Set_CameraEye();
+		if (zoom_cnt <= 0.0f)
+		{
+			zoom_cnt = 0.0f;
+			camera->bZoom_Back = false;
+		}
+	}
+}
+
+// CameraEyeのセット
+void Camera::Set_CameraEye()
+{
+	posEye.y += sinf(D3DXToRadian(rotAt.x)) * zoom_cnt;
+	posEye.x += sinf(D3DXToRadian(rotAt.y)) * zoom_cnt;
+	posEye.z += cosf(D3DXToRadian(rotAt.y)) * zoom_cnt;
+}
+
+// CameraEyeのリセット
+void Camera::Reset_CameraEye()
+{
+	posEye.y -= sinf(D3DXToRadian(rotAt.x)) * zoom_cnt;
+	posEye.x -= sinf(D3DXToRadian(rotAt.y)) * zoom_cnt;
+	posEye.z -= cosf(D3DXToRadian(rotAt.y)) * zoom_cnt;
 }
 
 // 回転角度の補正

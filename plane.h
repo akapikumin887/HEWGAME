@@ -15,7 +15,7 @@
 class Plane
 {
 public:
-	VERTEX_3D *planev;           // 頂点情報
+	VERTEX_3D *planev;          // 頂点情報
 	D3DXVECTOR3 pos;            // 位置
 	D3DXVECTOR3 rot;            // 回転
 	D3DXVECTOR3 scl;            // 大きさ
@@ -23,12 +23,15 @@ public:
 	bool revolution;            // 公転フラグ
 	D3DXVECTOR3 revRadius;      // 公転半径
 	D3DXVECTOR3 revSpd;         // 公転速度
+	D3DXVECTOR3 size;           // サイズ
+	D3DXVECTOR3 size_nor;       // 単位サイズ
 
 	Plane(); // Planeの頂点情報取得（コンストラクタ）
 	~Plane(); // Planeの頂点情報のリリース（デストラクタ）
 
 	void Draw_Plane(); // Planeの描画
 	void Set_Plane(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, // Planeのテクスチャ・位置・回転・大きさの設定
+		D3DXVECTOR3 sz, D3DXVECTOR3 szn, // Planeのサイズ・単位サイズの設定
 		bool Revolution = false, D3DXVECTOR3 RevRadius = D3DXVECTOR3(0, 0, 0), D3DXVECTOR3 RevSpd = D3DXVECTOR3(0, 0, 0)); // Planeの公転フラグ・公転半径・公転速度の設定
 	float Rotation_Correction(float r); // Planeの回転の補正
 };

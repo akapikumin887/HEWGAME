@@ -1,7 +1,7 @@
 #ifndef SYSTEM_TIMER_H_
 #define SYSTEM_TIMER_H_
 
-class Time
+class Timer
 {
 public:
 	bool bTimerStopped;       // ストップフラグ
@@ -10,7 +10,7 @@ public:
 	LONGLONG LastElapsedTime; // 最後に記録した更新時間
 	LONGLONG BaseTime;        // 基本時間
 
-	Time();
+	Timer();
 	void SystemTimer_Reset(void); // システムタイマーのリセット
 	void SystemTimer_Start(void); // システムタイマーのスタート
 	void SystemTimer_Stop(void); // システムタイマーのストップ
@@ -36,5 +36,5 @@ void SystemTimer_Finalize(void); // システムタイマーの終了処理
 //float SystemTimer_GetElapsedTime(void); // 経過時間の取得
 //bool SystemTimer_IsStoped(void); // システムタイマーが止まっているか？
 void LimitThreadAffinityToCurrentProc(void); // 現在のスレッドを1つのプロセッサ（現在のスレッド）に制限
-Time* Get_Time(); // Time情報の取得
+Timer* Get_Time(); // Time情報の取得
 #endif // SYSTEM_TIMER_H_

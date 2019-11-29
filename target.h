@@ -16,6 +16,7 @@
 #define TARGET_Y 3.5f
 #define TARGET_Z AIMING_Z
 #define TARGET_MAG_Z AIMING_MAG_Z
+#define TARGET_SIZE 9.0f
 
 class Target
 {
@@ -28,6 +29,7 @@ public:
 	bool revolution;            // 公転フラグ
 	D3DXVECTOR3 revRadius;      // 公転半径
 	D3DXVECTOR3 revSpd;         // 公転速度
+	float circle[11];           // 
 
 	Target(); // Targetの頂点情報取得（コンストラクタ）
 	~Target(); // Targetの頂点情報のリリース（デストラクタ）

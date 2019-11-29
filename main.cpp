@@ -27,6 +27,10 @@
 #include "plane.h"
 #include "wall.h"
 #include "target.h"
+#include "gravility.h"
+#include "wind.h"
+#include "ui.h"
+#include "score.h"
 
 //====================================================
 // 定数定義
@@ -61,7 +65,7 @@ static LPDIRECT3DTEXTURE9 g_pTexture = NULL; // テクスチャインターフェース
 
 static float g_UVScrollValue = 0.0f;
 
-static Time *g_System_Time;
+static Timer *g_System_Time;
 static int g_FrameCount = 0; // フレームカウンター
 static double g_StaticFrameTime = 0.0f; // フレーム固定用計測時間
 SCENE g_Scene = SCENE_NONE;
@@ -227,11 +231,13 @@ bool Initialize(void)
 		MessageBox(g_hWnd, "いくつか読み込めなかったテクスチャファイルがあります", "エラー", MB_OK);
 	}
 
+	Camera_Initialize();
+
 	SetScene(SCENE_GAME);
 
 	InitSound(g_hWnd);
 
-	Camera_Initialize();
+	
 
 	Light_Initialize();
 	

@@ -5,7 +5,7 @@ static Plane plane;
 // Planeの初期化
 void Plane_Initialize()
 {
-	plane.Set_Plane(TEXTURE_INDEX_MAX, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(20.0f, 1.0f, 70.0f));
+	plane.Set_Plane(TEXTURE_INDEX_MAX, D3DXVECTOR3(0.0f, -10.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(10.0f, 1.0f, 10.0f), D3DXVECTOR3(10.0f, 0.0f, 20.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 }
 
 // Planeの終了処理
@@ -42,16 +42,19 @@ Plane::~Plane()
 // Planeの描画
 void Plane::Draw_Plane()
 {
-	planev->Sprite_Draw_Face(texture_index, pos, rot, scl, revolution, revRadius, revSpd);
+	planev->Sprite_Draw_FaceEX(texture_index, pos, rot, scl, size, size_nor, revolution, revRadius, revSpd);
 }
 
 // Planeのセット
-void Plane::Set_Plane(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd)
+void Plane::Set_Plane(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, D3DXVECTOR3 sz, D3DXVECTOR3 szn, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd)
 {
+	CreateFaceEX(sz, szn);
 	texture_index = textureindex;
 	pos = p;
 	rot = r;
 	scl = s;
+	size = sz;
+	size_nor = szn;
 	revolution = Revolution;
 	revRadius = RevRadius;
 	revSpd = RevSpd;

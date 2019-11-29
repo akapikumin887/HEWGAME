@@ -5,17 +5,24 @@
 #include "plane.h"
 #include "wall.h"
 #include "target.h"
+#include "gravility.h"
+#include "wind.h"
+#include "ui.h"
+#include "score.h"
 
 // Game‚Ì‰Šú‰»
 void Game_Initialize()
 {
 	CreateFace();
 	CreateCube();
+	Gravility_Initialize();
+	Wind_Initialize();
 	Aiming_Initialize();
 	Cube_Initialize();
 	Plane_Initialize();
 	//Wall_Initialize();
 	Target_Initialize();
+	UI_Initialize();
 }
 
 // Game‚ÌI—¹ˆ—
@@ -26,6 +33,9 @@ void Game_Finalize()
 	Plane_Finalize();
 	//Wall_Finalize();
 	Target_Finalize();
+	Gravility_Finalize();
+	Wind_Finalize();
+	UI_Finalize();
 }
 
 // Game‚ÌXV
@@ -42,6 +52,9 @@ void Game_Update()
 	Plane_Update();
 	//Wall_Update();
 	Target_Update();
+	Gravility_Update();
+	Wind_Update();
+	UI_Update();
 }
 
 // Game‚Ì•`‰æ
@@ -54,4 +67,7 @@ void Game_Draw()
 	//Wall_Draw();
 	Target_Draw();
 	Aiming_Draw();
+	Gravility_Draw();
+	Wind_Draw();
+	UI_Draw();
 }

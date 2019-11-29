@@ -16,7 +16,7 @@
 // 停止していれば停止時間、そうでなければ現在の時間の取得
 //static LARGE_INTEGER GetAdjustedCurrentTime(void);
 
-static Time *time;
+static Timer *alphabet;
 
 //====================================================
 // 関数定義
@@ -24,17 +24,17 @@ static Time *time;
 // システムタイマーの初期化
 void SystemTimer_Initialize(void)
 {
-	time = new Time;
+	alphabet = new Timer;
 }
 
 // システムタイマーの終了処理
 void SystemTimer_Finalize(void)
 {
-	delete time;
+	delete alphabet;
 }
 
 // Timeの初期化（コンストラクタ）
-Time::Time()
+Timer::Timer()
 {
 	bTimerStopped = true;
 	TicksPerSec = 0;
@@ -58,7 +58,7 @@ Time::Time()
 //    g_bTimerStopped = false;
 //}
 
-void Time::SystemTimer_Reset(void)
+void Timer::SystemTimer_Reset(void)
 {
 	LARGE_INTEGER time = GetAdjustedCurrentTime();
 
@@ -85,7 +85,7 @@ void Time::SystemTimer_Reset(void)
 //    g_bTimerStopped = false;
 //}
 
-void Time::SystemTimer_Start(void)
+void Timer::SystemTimer_Start(void)
 {
 	// 現在の時間を取得
 	LARGE_INTEGER time = { 0 };
@@ -114,7 +114,7 @@ void Time::SystemTimer_Start(void)
 //    g_bTimerStopped = true;
 //}
 
-void Time::SystemTimer_Stop(void)
+void Timer::SystemTimer_Stop(void)
 {
 	if (bTimerStopped) return;
 
@@ -131,7 +131,7 @@ void Time::SystemTimer_Stop(void)
 //    g_StopTime += g_TicksPerSec / 10;
 //}
 
-void Time::SystemTimer_Advance(void)
+void Timer::SystemTimer_Advance(void)
 {
 	StopTime += TicksPerSec / 10;
 }
@@ -144,7 +144,7 @@ void Time::SystemTimer_Advance(void)
 //    return (double)(time.QuadPart - g_BaseTime) / (double)g_TicksPerSec;
 //}
 
-double Time::SystemTimer_GetTime(void)
+double Timer::SystemTimer_GetTime(void)
 {
 	LARGE_INTEGER time = GetAdjustedCurrentTime();
 
@@ -160,7 +160,7 @@ double Time::SystemTimer_GetTime(void)
 //    return time.QuadPart / (double)g_TicksPerSec;
 //}
 
-double Time::SystemTimer_GetAbsoluteTime(void)
+double Timer::SystemTimer_GetAbsoluteTime(void)
 {
 	LARGE_INTEGER time = { 0 };
 	QueryPerformanceCounter(&time);
@@ -187,7 +187,7 @@ double Time::SystemTimer_GetAbsoluteTime(void)
 //    return (float)elapsed_time;
 //}
 
-float Time::SystemTimer_GetElapsedTime(void)
+float Timer::SystemTimer_GetElapsedTime(void)
 {
 	LARGE_INTEGER time = GetAdjustedCurrentTime();
 
@@ -211,7 +211,7 @@ float Time::SystemTimer_GetElapsedTime(void)
 //    return g_bTimerStopped;
 //}
 
-bool Time::SystemTimer_IsStoped(void)
+bool Timer::SystemTimer_IsStoped(void)
 {
 	return bTimerStopped;
 }
@@ -253,7 +253,7 @@ void LimitThreadAffinityToCurrentProc(void)
 //    return time;
 //}
 
-LARGE_INTEGER Time::GetAdjustedCurrentTime(void)
+LARGE_INTEGER Timer::GetAdjustedCurrentTime(void)
 {
 	LARGE_INTEGER time;
 	if (StopTime != 0) {
@@ -266,7 +266,7 @@ LARGE_INTEGER Time::GetAdjustedCurrentTime(void)
 }
 
 // Time情報の取得
-Time* Get_Time()
+Timer* Get_Time()
 {
-	return time;
+	return alphabet;
 }
