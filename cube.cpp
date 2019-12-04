@@ -1,13 +1,13 @@
 #include "cube.h"
 #include "input.h"
 #include "debug_font.h"
-#include "camera.h"
-#include "aiming.h"
-#include "target.h"
-#include "wall.h"
+#include "score.h"
 #include "gravility.h"
 #include "wind.h"
-#include "score.h"
+#include "camera.h"
+#include "target.h"
+#include "wall.h"
+#include "aiming.h"
 
 static Cube cube[CUBE_MAX];
 static Camera *camera;
@@ -25,9 +25,9 @@ void Cube_Initialize()
 	{
 		cube[i].bUse = false;
 	}
-	camera = Get_Camera();
-	gravility = Get_Gravility();
-	wind = Get_Wind();
+	camera = Get_Camera(); // Camera情報の取得
+	gravility = Get_Gravility(); // Gravility情報の取得
+	wind = Get_Wind(); // Wind情報の取得
 	speed = MOVE_SPEED;
 }
 
@@ -50,8 +50,10 @@ void Cube_Finalize()
 // Cubeの更新
 void Cube_Update()
 {
+	// 矢の残数の初期化
 	Cube::cnt = 0;
 
+	// スピード調整
 	if (Keyboard_IsTrigger(DIK_J))
 	{
 		speed -= 0.1f * MOVE_SPEED;
@@ -217,7 +219,7 @@ void Cube::Cube_Aiming_Direction()
 // Cubeの移動時の向き
 void Cube::Cube_Move_Direction()
 {
-	direction = pos - posOld;
+	direction = pos - posOld; // Cubeの向きの計算
 	D3DXVec3Normalize(&direction, &direction); // Cubeの向きの正規化
 	rot = D3DXVECTOR3(-D3DXToDegree(atan2f(direction.y, direction.z)), D3DXToDegree(atan2f(direction.x, direction.z)), 0.0f); // 向きによるCubeの回転
 }

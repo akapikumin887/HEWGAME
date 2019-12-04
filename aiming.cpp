@@ -1,8 +1,8 @@
 #include "aiming.h"
 #include "input.h"
 #include "debug_font.h"
-#include "cube.h"
 #include "camera.h"
+#include "cube.h"
 
 static Aiming aiming;
 static Number time;
@@ -40,15 +40,16 @@ void Aiming_Update()
 	// 構え（矢の生成）
 	if (Keyboard_IsTrigger(DIK_LSHIFT) && !aiming.prepare && !camera->bZoom_Ready && !camera->bZoom_Back)
 	{
-		Add_Cube();
+		Add_Cube(); // 矢の生成
 		aiming.prepare = true;
-		aiming.time_cnt = new Timer;
-		aiming.time_cnt->SystemTimer_Start();
+		aiming.time_cnt = new Timer; // カウントダウンタイマーインスタンスの生成
+		aiming.time_cnt->SystemTimer_Start(); // タイムスタート
 	}
 
 	// 構え状態中
 	if (aiming.prepare)
 	{
+		// Cameraズーム前進
 		camera->Camera_Zoom_Forward();
 
 		// カウントダウンを更新
@@ -57,23 +58,26 @@ void Aiming_Update()
 		// 時間制限を超えた
 		if (timeCnt < 0.0f)
 		{
-			Cube *cube = Get_Cube();
+			Cube *cube = Get_Cube(); // Cube情報の取得
 			for (int i = 0; i < CUBE_MAX; i++)
 			{
+				// 使用中で、発射されていない、時間制限で発射されていないではない矢
 				if (cube[i].bUse && !cube[i].bShotted && !cube[i].nShotted)
 				{
+					// 時間制限で未発射だから、フラグをtrueに
 					cube[i].nShotted = true;
 					break;
 				}
 			}
 			aiming.charge_span = 0;
-			aiming.prepare = false;
-			camera->bZoom_Back = true;
-			delete aiming.time_cnt;
+			aiming.prepare = false; // 構え解除
+			camera->bZoom_Back = true; // Cameraズーム後退フラグ
+			delete aiming.time_cnt; // カウントダウンタイマーインスタンスの削除
 			aiming.time_cnt = NULL;
 			return;
 		}
 
+		// ズームが終わるまでチャージはできない（チャージはできないから、発射もできない）
 		if (camera->zoom_cnt >= ZOOM_MAX)
 		{
 			// 弓を引く（チャージ）
@@ -99,20 +103,21 @@ void Aiming_Update()
 			Cube *cube = Get_Cube();
 			for (int i = 0; i < CUBE_MAX; i++)
 			{
-				if (cube[i].bUse && !cube[i].bShotted)
+				// 使用中で、発射されていない、時間制限で発射されていないではない矢を発射
+				if (cube[i].bUse && !cube[i].bShotted && !cube[i].nShotted)
 				{
-					cube[i].bShotted = true;
+					cube[i].bShotted = true; // 発射されたことにする
 					//cube[i].charge = aiming.charge_span;
 				}
 			}
 			aiming.charge_span = 0;
-			aiming.prepare = false;
-			delete aiming.time_cnt;
+			aiming.prepare = false; // 構え解除
+			delete aiming.time_cnt; // カウントダウンタイマーインスタンスの削除
 			aiming.time_cnt = NULL;
 		}
 	}
 
-	// Zoom後退
+	// Cameraズーム後退
 	camera->Camera_Zoom_Back();
 }
 
@@ -121,25 +126,44 @@ void Aiming_Draw()
 {
 	aiming.Draw_Aiming();
 
-	int i;
+	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 
+	// ブレンド設定
+	pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);			// αブレンドを行う
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// αソースカラーの指定
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// αデスティネーションカラーの指定
+	// サンプラーステートパラメータの設定
+	pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);// テクスチャアドレッシング方法(U値)を設定
+	pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);// テクスチャアドレッシング方法(V値)を設定
+	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	// テクスチャ縮小フィルタモードを設定
+	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	// テクスチャ拡大フィルタモードを設定
+
+	Sprite_SetColor_2D(time.color); // 色のセット
+
+	// タイマー時間表示
+	// カウントダウンタイマーがある場合
 	if (aiming.time_cnt != NULL)
 	{
-		// 小数点以降
-		for (i = 0; i < TIME_DIGIT_MAX - 1; i++)
+		for (int i = 0; i < TIME_DIGIT_MAX - 1; i++)
 		{
+			// 小数点以降2桁から始まる（iが0の時、カウントダウンを10の-2乗で割ったら、100倍になる）
 			time.n_tmp = (int)(timeCnt / pow((double)10, (double)i - 2));
-			time.n_tmp = time.n_tmp % 10;
+			time.n_tmp = time.n_tmp % 10; // 1の位の値を取り出す
+
+			// 取り出した値を表示
+			// 小数点以降2桁を表示出来たら、1マスあけて、小数点以前の2桁を表示する
 			Sprite_Draw_2D(time.TextureIndex,
 				SCREEN_WIDTH - time.pos.x * (i < TIME_DIGIT_MAX / 2 ? i : i + 1) * 2 - time.pos.x, time.pos.y * 4,
 				time.tx + time.n_tmp * time.tw, time.ty,
 				time.tw, time.th);
 		}
 	}
+	// カウントダウンタイマーがない場合
 	else
 	{
-		for (i = 0; i < TIME_DIGIT_MAX - 1; i++)
+		for (int i = 0; i < TIME_DIGIT_MAX - 1; i++)
 		{
+			// 全部0で表示
 			Sprite_Draw_2D(time.TextureIndex,
 				SCREEN_WIDTH - time.pos.x * (i < TIME_DIGIT_MAX / 2 ? i : i + 1) * 2 - time.pos.x, time.pos.y * 4,
 				time.tx, time.ty,
@@ -147,6 +171,9 @@ void Aiming_Draw()
 		}
 	}
 
+	Sprite_SetColor_2D(alphabet.color); // 色のセット
+
+	// アルファベットの表示
 	for (int i = 0; i < alphabet.len; i++)
 	{
 		Sprite_Draw_2D(alphabet.TextureIndex,
@@ -169,7 +196,6 @@ Aiming::Aiming()
 {
 	aimingv = new VERTEX_3D;
 	time_cnt = NULL;
-	isAiming = false;
 	prepare = false;
 }
 

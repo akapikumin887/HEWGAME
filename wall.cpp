@@ -1,14 +1,15 @@
 #include "wall.h"
+#include "camera.h"
 #include "aiming.h"
 
-static Wall target[3];
+static Wall wall;
+static Camera *camera;
+static D3DXMATRIX m;
 
 // Wallの初期化
 void Wall_Initialize()
 {
-	target[0].Set_Wall(TEXTURE_INDEX_AIROU, D3DXVECTOR3(5.0f, 5.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 90.0f), D3DXVECTOR3(10.0f, 1.0f, 10.0f));
-	target[1].Set_Wall(TEXTURE_INDEX_AIROU, D3DXVECTOR3(-5.0f, 5.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 270.0f), D3DXVECTOR3(10.0f, 1.0f, 10.0f));
-	target[2].Set_Wall(TEXTURE_INDEX_AIROU, D3DXVECTOR3(AIMING_X, AIMING_Y, AIMING_Z * AIMING_MAG_Z), D3DXVECTOR3(270.0f, 0.0f, 0.0f), D3DXVECTOR3(5.0f, 1.0f, 5.0f));
+	wall.Set_Wall(TEXTURE_INDEX_AIROU, D3DXVECTOR3(0.0f, 0.0f, 15.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(10.0f, 10.0f, 1.0f), D3DXVECTOR3(10.0f, 0.0f, 20.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 }
 
 // Wallの終了処理
@@ -20,15 +21,14 @@ void Wall_Finalize()
 // Wallの更新
 void Wall_Update()
 {
-	target[0].Rotation_Correction(target[0].rot.z += 1.0f);
+
+	//wall.Rotation_Correction(wall.rot.z += 1.0f);
 }
 
 // Wallの描画
 void Wall_Draw()
 {
-	//wall[0].Draw_Wall();
-	//wall[1].Draw_Wall();
-	target[2].Draw_Wall();
+	wall.Draw_Wall();
 }
 
 // Wallの頂点情報取得（コンストラクタ）
@@ -46,16 +46,21 @@ Wall::~Wall()
 // Wallの描画
 void Wall::Draw_Wall()
 {
-	wallv->Sprite_Draw_Face(texture_index, pos, rot, scl, revolution, revRadius, revSpd);
+	//wallv->Sprite_Draw_Billboard(texture_index, pos, scl, revolution, revRadius, revSpd);
+	wallv->Sprite_Draw_Billboard(texture_index, pos, scl, revolution, revRadius, revSpd);
+	//wallv->Sprite_Draw_FaceEX(texture_index, pos, rot, scl, size, size_nor, revolution, revRadius, revSpd);
 }
 
 // Wallのセット
-void Wall::Set_Wall(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd)
+void Wall::Set_Wall(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, D3DXVECTOR3 sz, D3DXVECTOR3 szn, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd)
 {
+	//wallv->CreateFaceEX(sz, szn);
 	texture_index = textureindex;
 	pos = p;
 	rot = r;
 	scl = s;
+	size = sz;
+	size_nor = szn;
 	revolution = Revolution;
 	revRadius = RevRadius;
 	revSpd = RevSpd;

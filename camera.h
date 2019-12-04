@@ -29,21 +29,24 @@
 #define EYETOATLEN sqrtf(powf(CAMERAEYE_X - CAMERAAT_X, 2.0f) + powf(CAMERAEYE_Y - CAMERAAT_Y, 2.0f) + powf(CAMERAEYE_Z - CAMERAAT_Z, 2.0f))
 #define CAMERAATROT 1.0f
 #define ROT_X_LIMIT (90.0f - CAMERAATROT)
-#define CAMERA_MOVE_SPEED 0.5f
+#define CAMERA_MOVE_SPEED 1.0f
 #define ZOOM_MAX 8.5f
 #define ZOOM_INCREASING 0.5f
 
 class Camera
 {
 public:
-	D3DXVECTOR3 posEye;    // Cameraの視点
-	D3DXVECTOR3 posAt;     // Cameraの注視点
-	D3DXVECTOR3 vecUp;     // Cameraの上方向
-	D3DXVECTOR3 rotAt;     // CameraEyeの回転
-	float lenEyeToAt;      // Camera位置と注視点の距離
-	bool bZoom_Back;       // Zoom後退フラグ
-	bool bZoom_Ready;      // Zoom準備フラグ
-	float zoom_cnt;        // Zoomカウンタ
+	D3DXMATRIX mtxView;       // ビューマトリックス
+	D3DXMATRIX mtxProjection; // プロジェクションマトリックス
+	D3DXVECTOR3 posEye;       // Cameraの視点
+	D3DXVECTOR3 posAt;        // Cameraの注視点
+	D3DXVECTOR3 vecUp;        // Cameraの上方向
+	D3DXVECTOR3 rotAt;        // CameraEyeの回転
+	D3DXVECTOR3 direction;    // Cameraの向き
+	float lenEyeToAt;         // Camera位置と注視点の距離
+	bool bZoom_Back;          // Zoom後退フラグ
+	bool bZoom_Ready;         // Zoom準備フラグ
+	float zoom_cnt;           // Zoomカウンタ
 
 	Camera(); // Cameraの初期化（コンストラクタ）
 	void CameraReset(); // Cameraのリセット

@@ -1,6 +1,6 @@
 #include "target.h"
-#include "aiming.h"
 #include "camera.h"
+#include "aiming.h"
 
 static Target target;
 
@@ -63,6 +63,8 @@ void Target::Set_Target(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r,
 	revolution = Revolution;
 	revRadius = RevRadius;
 	revSpd = RevSpd;
+
+	// ŠeŠÂ‚Ì”¼Œa‚ğ‰Šú‰»
 	float c = TARGET_SIZE / 20;
 	circle[0] = c / 2;
 	for (int i = 1; i < 11; i++)

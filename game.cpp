@@ -1,41 +1,41 @@
 #include "game.h"
 #include "input.h"
-#include "aiming.h"
+#include "ui.h"
+#include "gravility.h"
+#include "wind.h"
 #include "cube.h"
 #include "plane.h"
 #include "wall.h"
 #include "target.h"
-#include "gravility.h"
-#include "wind.h"
-#include "ui.h"
-#include "score.h"
+#include "aiming.h"
 
 // Game‚Ì‰Šú‰»
 void Game_Initialize()
 {
+	CreateBillboard();
 	CreateFace();
 	CreateCube();
+	UI_Initialize();
 	Gravility_Initialize();
 	Wind_Initialize();
-	Aiming_Initialize();
 	Cube_Initialize();
 	Plane_Initialize();
 	//Wall_Initialize();
 	Target_Initialize();
-	UI_Initialize();
+	Aiming_Initialize();
 }
 
 // Game‚ÌI—¹ˆ—
 void Game_Finalize()
 {
-	Aiming_Finalize();
+	UI_Finalize();
+	Gravility_Finalize();
+	Wind_Finalize();
 	Cube_Finalize();
 	Plane_Finalize();
 	//Wall_Finalize();
 	Target_Finalize();
-	Gravility_Finalize();
-	Wind_Finalize();
-	UI_Finalize();
+	Aiming_Finalize();
 }
 
 // Game‚ÌXV
@@ -47,14 +47,15 @@ void Game_Update()
 		SetScene(SCENE_GAME);
 		return;
 	}
-	Aiming_Update();
+	UI_Update();
+	Gravility_Update();
+	Wind_Update();
 	Cube_Update();
 	Plane_Update();
 	//Wall_Update();
 	Target_Update();
-	Gravility_Update();
-	Wind_Update();
-	UI_Update();
+	Aiming_Update();
+	
 }
 
 // Game‚Ì•`‰æ
@@ -62,12 +63,12 @@ void Game_Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	UI_Draw();
+	Gravility_Draw();
+	Wind_Draw();
 	Cube_Draw();
 	Plane_Draw();
 	//Wall_Draw();
 	Target_Draw();
 	Aiming_Draw();
-	Gravility_Draw();
-	Wind_Draw();
-	UI_Draw();
 }

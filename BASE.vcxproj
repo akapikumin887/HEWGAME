@@ -40,6 +40,7 @@
     <ClInclude Include="ui.h" />
     <ClInclude Include="wall.h" />
     <ClInclude Include="wind.h" />
+    <ClInclude Include="xmodel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
@@ -63,6 +64,7 @@
     <ClCompile Include="ui.cpp" />
     <ClCompile Include="wall.cpp" />
     <ClCompile Include="wind.cpp" />
+    <ClCompile Include="xmodel.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -33,7 +33,6 @@ public:
 	bool revolution;            // 公転フラグ
 	D3DXVECTOR3 revRadius;      // 公転半径
 	D3DXVECTOR3 revSpd;         // 公転速度
-	bool isAiming;              // 照準フラグ
 	bool prepare;               // 構えフラグ
 	bool isShot;                // 発射フラグ
 	int charge_span;            // チャージ間隔

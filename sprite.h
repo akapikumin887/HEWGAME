@@ -28,13 +28,32 @@ public:
 	D3DXVECTOR3 nor;  // 法線ベクトル
 	D3DCOLOR diffuse; // 反射光
 	D3DXVECTOR2 tex;  // テクスチャ座標
+	D3DXMATRIX mtxWorld; // ワールドマトリックス
 
+	// 共通頂点用
+	static LPDIRECT3DVERTEXBUFFER9 pD3DVtxBufferBillboard; // Billboard頂点バッファ
+	static LPDIRECT3DINDEXBUFFER9 pD3DIdxBufferBillboard;  // Billboard頂点インデックス
+	static LPDIRECT3DVERTEXBUFFER9 pD3DVtxBufferFace;      // Face頂点バッファ
+	static LPDIRECT3DINDEXBUFFER9 pD3DIdxBufferFace;       // Face頂点インデックス
+	static LPDIRECT3DVERTEXBUFFER9 pD3DVtxBufferCube;      // Cube頂点バッファ
+
+	// 独自頂点用
+	LPDIRECT3DVERTEXBUFFER9 pD3DVtxBufferFaceEX; // Face頂点バッファEX
+	LPDIRECT3DINDEXBUFFER9 pD3DIdxBufferFaceEX; // Face頂点インデックスEX
+
+	VERTEX_3D();
+	~VERTEX_3D();
+
+	void CreateFaceEX(D3DXVECTOR3 sz, D3DXVECTOR3 szn); // Face（バッファ）の生成(縮退ポリゴン)
+	void Sprite_Draw_Billboard(TextureIndex texture_index, // テクスチャの設定
+		D3DXVECTOR3 pos, D3DXVECTOR3 scl,
+		bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd); // 公転フラグ・公転半径・公転速度の設定
 	void Sprite_Draw_Face(TextureIndex texture_index, // テクスチャの設定
 		D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl, // 位置・回転・大きさの設定
 		bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd); // 公転フラグ・公転半径・公転速度の設定
 	void Sprite_Draw_FaceEX(TextureIndex texture_index, // テクスチャの設定
 		D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl, // 位置・回転・大きさの設定
-		D3DXVECTOR3 size, D3DXVECTOR3 size_nor,
+		D3DXVECTOR3 size, D3DXVECTOR3 size_nor, // ポリゴンの長さ・単位長さの設定
 		bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd); // 公転フラグ・公転半径・公転速度の設定
 	void Sprite_Draw_Cube(TextureIndex texture_index, // テクスチャの設定
 		D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl, // 位置・回転・大きさの設定
@@ -54,8 +73,6 @@ void Sprite_Draw_Rotation_2D(TextureIndex texture_index, float dx, float dy, int
 void Sprite_DrawEx_2D(TextureIndex texture_index, float dx, float dy, float tx, float ty, float tw, float th); // dxは表示座標txは左上テクスチャ座標twテクスチャ貼り付けサイズ
 void Sprite_Finalize_3D();
 void CreateFace(); // Face（バッファ）の生成
+void CreateBillboard(); // Billboard（バッファ）の生成
 void CreateCube(); // Cube（バッファ）の生成
-void IndexBuffer_Initialize(); // IndexBufferの初期化
-void Index_Draw(TextureIndex texture_index, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 scl, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd); // IndexBufferの描画
-void CreateFaceEX(D3DXVECTOR3 sz, D3DXVECTOR3 szn); // Face（バッファ）の生成(縮退ポリゴン)
 #endif 

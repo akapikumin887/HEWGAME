@@ -24,9 +24,10 @@ class Cube
 public:
 	bool bUse;                  // 使用フラグ
 	bool bShotted;              // 発射フラグ
-	bool nShotted;              // 時間制限で未発射
+	bool nShotted;              // 時間制限で未発射フラグ
 	bool bHit;                  // 命中フラグ
 	VERTEX_3D *cubev;           // 頂点情報
+	TextureIndex texture_index; // テクスチャ
 	D3DXVECTOR3 pos;            // 現在位置
 	D3DXVECTOR3 posOld;         // 旧位置
 	D3DXVECTOR3 posHead;        // 先頭位置
@@ -34,7 +35,6 @@ public:
 	D3DXVECTOR3 posAiming;      // 発射時のAimingの位置情報
 	D3DXVECTOR3 rot;            // 回転
 	D3DXVECTOR3 scl;            // 大きさ
-	TextureIndex texture_index; // テクスチャ
 	bool revolution;            // 公転フラグ
 	D3DXVECTOR3 revRadius;      // 公転半径
 	D3DXVECTOR3 revSpd;         // 公転速度

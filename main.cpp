@@ -13,6 +13,7 @@
 #include "mydirect3d.h"
 #include "sprite.h"
 #include "texture.h"
+#include "xmodel.h"
 #include "mydirect3d.h"
 #include "debug_font.h"
 #include "time.h"
@@ -22,15 +23,16 @@
 #include "camera.h"
 #include "light.h"
 #include "game.h"
-#include "aiming.h"
+#include "ui.h"
+#include "score.h"
+#include "gravility.h"
+#include "wind.h"
 #include "cube.h"
 #include "plane.h"
 #include "wall.h"
 #include "target.h"
-#include "gravility.h"
-#include "wind.h"
-#include "ui.h"
-#include "score.h"
+#include "aiming.h"
+
 
 //====================================================
 // 定数定義
@@ -237,14 +239,12 @@ bool Initialize(void)
 
 	InitSound(g_hWnd);
 
-	
-
 	Light_Initialize();
 	
 	// システムタイマーの初期化
-	
 	SystemTimer_Initialize();
 	g_System_Time = Get_Time();
+
 	// システムタイマーの起動
 	g_System_Time->SystemTimer_Start();
 
@@ -260,7 +260,6 @@ void Update(void)
 	Keyboard_Update();
 	Mouse_Update();
 	Camera_Update();
-
 	Light_Update();
 
 	switch (g_Scene)
@@ -293,9 +292,8 @@ void Draw(void)
 	Camera_Draw();
 
 	Light_Draw();
+
 	DebugFont_Draw(640, 2, "Time: %.02lf", g_System_Time->SystemTimer_GetTime());
-	// オブジェクトのDraw関数に入れる？
-	//pD3DDevice->SetFVF(FVF_VERTEX_2D);
 
 	switch (g_Scene)
 	{

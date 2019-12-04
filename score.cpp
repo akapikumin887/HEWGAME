@@ -30,8 +30,6 @@ void Score_Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 
-	// テクスチャのセット
-	pDevice->SetTexture(0, Texture_GetTexture(score.TextureIndex));
 	// ブレンド設定
 	pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);			// αブレンドを行う
 	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// αソースカラーの指定
@@ -43,19 +41,24 @@ void Score_Draw()
 	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	// テクスチャ拡大フィルタモードを設定
 
 	Sprite_SetColor_2D(score.color); // 色のセット
-	
-	// スプライト
 
+	// スコア表示
 	for (int i = 0; i < SCORE_DIGIT_MAX; i++)
 	{
+		// 1の位から始まる
 		score.n_tmp = score.n / (int)powf((float)10, (float)i);
-		score.n_tmp = score.n_tmp % 10;
+		score.n_tmp = score.n_tmp % 10; // 1の位の値を取り出す
+
+		// 取り出した値を表示
 		Sprite_Draw_2D(score.TextureIndex,
 			SCREEN_WIDTH - score.pos.x * i * 2 - score.pos.x, score.pos.y,
 			score.tx + score.n_tmp * score.tw, score.ty,
 			score.tw, score.th);
 	}
 	
+	Sprite_SetColor_2D(alphabet.color); // 色のセット
+
+	// アルファベットの表示
 	for (int i = 0; i < alphabet.len; i++)
 	{
 		Sprite_Draw_2D(alphabet.TextureIndex,

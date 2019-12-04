@@ -16,15 +16,15 @@ class Plane
 {
 public:
 	VERTEX_3D *planev;          // 頂点情報
+	TextureIndex texture_index; // テクスチャ
+	D3DXVECTOR3 size;           // サイズ
+	D3DXVECTOR3 size_nor;       // 単位サイズ
 	D3DXVECTOR3 pos;            // 位置
 	D3DXVECTOR3 rot;            // 回転
 	D3DXVECTOR3 scl;            // 大きさ
-	TextureIndex texture_index; // テクスチャ
 	bool revolution;            // 公転フラグ
 	D3DXVECTOR3 revRadius;      // 公転半径
 	D3DXVECTOR3 revSpd;         // 公転速度
-	D3DXVECTOR3 size;           // サイズ
-	D3DXVECTOR3 size_nor;       // 単位サイズ
 
 	Plane(); // Planeの頂点情報取得（コンストラクタ）
 	~Plane(); // Planeの頂点情報のリリース（デストラクタ）
