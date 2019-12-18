@@ -27,6 +27,7 @@ LPDIRECT3DVERTEXBUFFER9 VERTEX_3D::pD3DVtxBufferFace = NULL; // Face頂点バッファ
 LPDIRECT3DINDEXBUFFER9 VERTEX_3D::pD3DIdxBufferFace = NULL; // Face頂点インデックス
 LPDIRECT3DVERTEXBUFFER9 VERTEX_3D::pD3DVtxBufferCube = NULL; // Cube頂点バッファ
 
+
 //====================================================
 // 初期化
 //====================================================
@@ -591,7 +592,7 @@ VERTEX_3D::~VERTEX_3D()
 		pD3DVtxBufferFaceEX = NULL;
 	}
 
-	if (pD3DIdxBufferFaceEX != NULL)
+	if (pD3DIdxBufferFaceEX)
 	{
 		pD3DIdxBufferFaceEX->Release(); // インターフェースの解放
 		pD3DIdxBufferFaceEX = NULL;
@@ -610,7 +611,7 @@ void VERTEX_3D::CreateFaceEX(D3DXVECTOR3 sz, D3DXVECTOR3 szn)
 		D3DUSAGE_WRITEONLY,     // 頂点バッファの使用法
 		FVF_VERTEX_3D,          // 使用する頂点フォーマット
 		D3DPOOL_MANAGED,        // リソースのバッファを保持するメモリクラスを指定
-		&pD3DVtxBufferFaceEX, // 頂点バッファインターフェースへのポインタ
+		&pD3DVtxBufferFaceEX,   // 頂点バッファインターフェースへのポインタ
 		NULL);                  // NULLに設定
 
 	// 頂点バッファの中身を埋める
@@ -629,13 +630,11 @@ void VERTEX_3D::CreateFaceEX(D3DXVECTOR3 sz, D3DXVECTOR3 szn)
 
 		//反射光の設定
 		pVtx[i].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-	}
 
-	// テクスチャ座標の設定
-	//pVtx[0].tex = D3DXVECTOR2(0.0f, 0.0f);
-	//pVtx[1].tex = D3DXVECTOR2(1.0f, 0.0f);
-	//pVtx[2].tex = D3DXVECTOR2(0.0f, 1.0f);
-	//pVtx[3].tex = D3DXVECTOR2(1.0f, 1.0f);
+		// テクスチャ座標の設定
+		pVtx[i].tex = D3DXVECTOR2((float)(i % (kx + 1)), (float)(i / (kx + 1))); // マスごとにテクスチャを貼る
+		//pVtx[i].tex = D3DXVECTOR2((float)(i % (kx + 1)) / kx, (float)(i / (kx + 1)) / kz); // 全体にテクスチャを貼る
+	}
 
 	//頂点データをアンロックする
 	pD3DVtxBufferFaceEX->Unlock();

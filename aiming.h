@@ -14,10 +14,10 @@
 #ifndef AIMING_H_
 #define AIMING_H_
 
-#define AIMING_X 0.0f
+#define AIMING_X TARGET_X
 #define AIMING_Y 0.0f
-#define AIMING_Z 5.0f
-#define AIMING_MAG_Z 6.0f
+#define AIMING_Z TARGET_Z
+#define AIMING_MAG_Z TARGET_MAG_Z
 #define CHARGE_SPAN 50
 #define TIME_COUNT_MAX 15.0f
 

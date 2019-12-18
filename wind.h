@@ -12,7 +12,7 @@
 #ifndef WIND_H_
 #define WIND_H_
 
-#define WIND_FORCE_MAG (FPS_STANTARD * 10)
+#define WIND_FORCE_MAG (FPS_STANTARD * 3)
 
 class Wind
 {

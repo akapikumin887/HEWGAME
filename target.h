@@ -12,10 +12,10 @@
 #ifndef TARGET_H_
 #define TARGET_H_
 
-#define TARGET_X AIMING_X
+#define TARGET_X 0.0f
 #define TARGET_Y 3.5f
-#define TARGET_Z AIMING_Z
-#define TARGET_MAG_Z AIMING_MAG_Z
+#define TARGET_Z 6.5f
+#define TARGET_MAG_Z 6.0f
 #define TARGET_SIZE 9.0f
 
 class Target

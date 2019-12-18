@@ -9,45 +9,59 @@
 #define DIRECTINPUT_VERSION (0x0800)
 #include <dinput.h>
 
-//====================================================
-// 関数のプロトタイプ宣言
-//====================================================
+//*****************************************************************************
+// マクロ定義
+//*****************************************************************************
 
-// キーボード入力モジュールの初期化    mainの初期化で呼ぶ
-//
-// 戻り値：初期化出来なかった場合false
-//
-// 引数：hinstance ... インスタンスハンドル（WinMainの引数などで取得）
-//       hWnd      ... ウィンドウハンドル
-//
-bool Keyboard_Initialize(HINSTANCE hInstance, HWND hWnd);
+// プログラム分けするときに使う
+#define	USE_KEYBOARD										// 宣言するとキーボードで操作可能になる
+#define	USE_MOUSE											// 宣言するとマウスで操作可能になる
+#define	USE_PAD												// 宣言するとパッドで操作可能になる
 
-// キーボードモジュールの終了処理　　mainの終了処理で呼ぶ
-void Keyboard_Finalize(void);
 
-// キーボードモジュールの更新        mainの更新処理の一番最初で呼ぶ（１ループに１回）
-// ※キーボード全体のキー状態の取得
-//
-void Keyboard_Update(void);
+/* game pad情報 */
+#define BUTTON_UP		0x00000001l	// 方向キー上(.IY<0)
+#define BUTTON_DOWN		0x00000002l	// 方向キー下(.IY>0)
+#define BUTTON_LEFT		0x00000004l	// 方向キー左(.IX<0)
+#define BUTTON_RIGHT	0x00000008l	// 方向キー右(.IX>0)
+#define BUTTON_A		0x00000010l	// Ａボタン(.rgbButtons[0]&0x80)
+#define BUTTON_B		0x00000020l	// Ｂボタン(.rgbButtons[1]&0x80)
+#define BUTTON_C		0x00000040l	// Ｃボタン(.rgbButtons[2]&0x80)
+#define BUTTON_X		0x00000080l	// Ｘボタン(.rgbButtons[3]&0x80)
+#define BUTTON_Y		0x00000100l	// Ｙボタン(.rgbButtons[4]&0x80)
+#define BUTTON_Z		0x00000200l	// Ｚボタン(.rgbButtons[5]&0x80)
+#define BUTTON_L		0x00000400l	// Ｌボタン(.rgbButtons[6]&0x80)
+#define BUTTON_R		0x00000800l	// Ｒボタン(.rgbButtons[7]&0x80)
+#define BUTTON_START	0x00001000l	// ＳＴＡＲＴボタン(.rgbButtons[8]&0x80)
+#define BUTTON_M		0x00002000l	// Ｍボタン(.rgbButtons[9]&0x80)
+#define GAMEPADMAX		4			// 同時に接続するジョイパッドの最大数をセット
 
-// キーボードのキー状態の取得　　　各シーンからキーをチェックをしたいときに呼ぶ
-//
-// Keyboard_Update()で取得したキーの状態を確認する関数群
-//
-// 戻り値：指定のキーが
-//     Press   ... 押されている
-//     Trigger ... 押した瞬間
-//     Release ... 離した瞬間
-// であった場合trueを返す
-//
-// 引数：nKey ... 調べたいキーのコード（DIK_～というキー列挙）<------dinput.hを見れ！
-//
-bool Keyboard_IsPress(int nKey);
-bool Keyboard_IsTrigger(int nKey);
-bool Keyboard_IsRelease(int nKey);
 
-bool Mouse_Initialize(HINSTANCE hInstance, HWND hWnd);
-void Mouse_Finalize(void);
-void Mouse_Update(void);
-DIMOUSESTATE* GetMouseState(void);
+//*****************************************************************************
+// プロトタイプ宣言
+//*****************************************************************************
+HRESULT Input_Initialize(HINSTANCE hInst, HWND hWnd);
+void Input_Finalize(void);
+void Input_Update(void);
+
+//---------------------------- keyboard
+bool GetKeyboardPress(int nKey);
+bool GetKeyboardTrigger(int nKey);
+bool GetKeyboardRepeat(int nKey);
+bool GetKeyboardRelease(int nKey);
+
+//---------------------------- mouse
+BOOL IsMouseLeftPressed(void);      // 左クリックした状態
+BOOL IsMouseLeftTriggered(void);    // 左クリックした瞬間
+BOOL IsMouseRightPressed(void);     // 右クリックした状態
+BOOL IsMouseRightTriggered(void);   // 右クリックした瞬間
+BOOL IsMouseCenterPressed(void);    // 中クリックした状態
+BOOL IsMouseCenterTriggered(void);  // 中クリックした瞬間
+long GetMouseX(void);               // マウスがX方向に動いた相対値
+long GetMouseY(void);               // マウスがY方向に動いた相対値
+long GetMouseZ(void);               // マウスホイールが動いた相対値
+
+//---------------------------- game pad
+BOOL IsButtonPressed(int padNo, DWORD button);
+BOOL IsButtonTriggered(int padNo, DWORD button);
 #endif

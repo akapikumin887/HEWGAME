@@ -1,6 +1,5 @@
 #include "target.h"
 #include "camera.h"
-#include "aiming.h"
 
 static Target target;
 
@@ -50,7 +49,7 @@ Target::~Target()
 void Target::Draw_Target()
 {
 	targetv->Sprite_Draw_Face(texture_index, pos, rot, scl, revolution, revRadius, revSpd);
-	targetv->Sprite_Draw_Face(texture_index, D3DXVECTOR3(CAMERAEYE_X, CAMERAEYE_Y + 20.0f, CAMERAEYE_Z), D3DXVECTOR3(180, 0, 0), scl, revolution, revRadius, revSpd);
+	targetv->Sprite_Draw_Face(texture_index, D3DXVECTOR3(CAMERAEYE_X, CAMERAEYE_Y + 120.0f, CAMERAEYE_Z), D3DXVECTOR3(180, 0, 0), scl, revolution, revRadius, revSpd);
 }
 
 // Target‚ÌƒZƒbƒg

@@ -13,7 +13,7 @@
 #define GRAVILITY_H_
 
 #define GRAVILITY -9.8f
-#define GRAVILITY_FORCE_MAG (FPS_STANTARD * 10)
+#define GRAVILITY_FORCE_MAG (FPS_STANTARD * 3)
 
 class Gravility
 {

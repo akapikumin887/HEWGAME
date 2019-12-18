@@ -7,7 +7,6 @@
 #include "camera.h"
 #include "target.h"
 #include "wall.h"
-#include "aiming.h"
 
 static Cube cube[CUBE_MAX];
 static Camera *camera;
@@ -15,6 +14,7 @@ static Aiming *aiming;
 static Wind *wind;
 static Gravility *gravility;
 static Target *target;
+bool Cube::bFlying = false;
 int Cube::cnt = 0;
 float speed;
 
@@ -54,14 +54,14 @@ void Cube_Update()
 	Cube::cnt = 0;
 
 	// スピード調整
-	if (Keyboard_IsTrigger(DIK_J))
+	if (GetKeyboardTrigger(DIK_J))
 	{
-		speed -= 0.1f * MOVE_SPEED;
+		speed -= 1.0f;
 	}
 
-	if (Keyboard_IsTrigger(DIK_K))
+	if (GetKeyboardTrigger(DIK_K))
 	{
-		speed += 0.1f * MOVE_SPEED;
+		speed += 1.0f;
 	}
 	
 	for (int i = 0; i < CUBE_MAX; i++)
@@ -83,7 +83,7 @@ void Cube_Update()
 					// 命中していない
 					if (!cube[i].bHit)
 					{
-						camera->bZoom_Ready = true; // 飛行中に、ズーム後退の準備
+						Cube::bFlying = true; // 飛行中
 						// 移動量の更新
 						cube[i].move = cube[i].direction * speed + wind->speed + gravility->g;
 						//cube[i].move = cube[i].direction * MOVE_SPEED;
@@ -105,8 +105,7 @@ void Cube_Update()
 						// 先頭位置が的を超えた場合
 						if (cube[i].posHead.z > cube[i].posAiming.z)
 						{
-							camera->bZoom_Back = true;
-							camera->bZoom_Ready = false;
+							camera->bZoom_Forward = true;
 							// 的での刺し位置の計算
 							float lenRatio = (cube[i].posAiming.z - cube[i].pos.z) / (cube[i].scl.z * cosf(D3DXToRadian(cube[i].rot.y)) * cosf(D3DXToRadian(cube[i].rot.x)));
 							cube[i].posHit.y = cube[i].pos.y - cube[i].scl.z * lenRatio * sinf(D3DXToRadian(cube[i].rot.x));

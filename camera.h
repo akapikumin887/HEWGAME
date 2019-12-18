@@ -8,8 +8,9 @@
 #include "mydirect3d.h"
 #include "sprite.h"
 #include "texture.h"
-#include "aiming.h"
+#include "target.h"
 #include "cube.h"
+#include "wall.h"
 
 #ifndef CAMERA_H_
 #define CAMERA_H_
@@ -30,7 +31,8 @@
 #define CAMERAATROT 1.0f
 #define ROT_X_LIMIT (90.0f - CAMERAATROT)
 #define CAMERA_MOVE_SPEED 1.0f
-#define ZOOM_MAX 8.5f
+#define CAMERA_ZOOM_SPEED 0.075f
+#define ZOOM_MAX 10.0f
 #define ZOOM_INCREASING 0.5f
 
 class Camera
@@ -41,19 +43,41 @@ public:
 	D3DXVECTOR3 posEye;       // Cameraの視点
 	D3DXVECTOR3 posAt;        // Cameraの注視点
 	D3DXVECTOR3 vecUp;        // Cameraの上方向
-	D3DXVECTOR3 rotAt;        // CameraEyeの回転
+	D3DXVECTOR3 rotEye;       // CameraEyeの回転
+	D3DXVECTOR3 rotAt;        // CameraAtの回転
 	D3DXVECTOR3 direction;    // Cameraの向き
 	float lenEyeToAt;         // Camera位置と注視点の距離
+	bool bZoom_Forward;       // Zoom前進フラグ
 	bool bZoom_Back;          // Zoom後退フラグ
-	bool bZoom_Ready;         // Zoom準備フラグ
 	float zoom_cnt;           // Zoomカウンタ
 
 	Camera(); // Cameraの初期化（コンストラクタ）
-	void CameraReset(); // Cameraのリセット
-	void Camera_Zoom_Forward(); // Cameraのズーム前進
-	void Camera_Zoom_Back(); // Cameraのズーム後退
-	void Set_CameraEye(); // CameraEyeのセット
-	void Reset_CameraEye(); // CameraEyeのリセット
+	
+	// ファーストパーソンCamera
+	// Camera基本処理
+	void Initialize(); // Cameraの初期化
+	void Finalize(); // Cameraの終了処理
+	void Update(); // Cameraの更新
+	void Draw(); // Cameraの描画
+
+	// Camera移動・回転処理
+	void Camera_Reset(); // Cameraのリセット
+	void CameraEye_Move(); // CameraEyeの移動
+	void CameraEye_Rot(); // CameraEyeの回転（自転）
+	void CameraAt_Move(); // CameraAtの移動
+
+	// Cameraズーム処理
+	void Camera_Zoom_Forward(float zm = ZOOM_MAX, float zi = ZOOM_INCREASING); // Cameraのズーム前進
+	void Camera_Zoom_Back(float zm = 0.0f, float zi = ZOOM_INCREASING * 2); // Cameraのズーム後退
+	void Set_Zoom(); // Zoomのセット
+	void Reset_Zoom(); // Zoomのリセット
+
+	// サードパーソンCamera
+	void Initialize(D3DXVECTOR3 p);
+	void Finalize(D3DXVECTOR3 p);
+	void Update(D3DXVECTOR3 p);
+	void CameraAt_Rot(); // CameraAtの回転（自転）
+
 	float Rotation_Correction(float r); // 回転角度の補正
 };
 

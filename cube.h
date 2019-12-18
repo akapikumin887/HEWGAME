@@ -8,12 +8,13 @@
 #include "mydirect3d.h"
 #include "sprite.h"
 #include "texture.h"
+#include "aiming.h"
 
 #ifndef CUBE_H_
 #define CUBE_H_
 
 #define CUBE_MAX 5
-#define MOVE_SPEED 10.0f
+#define MOVE_SPEED 20.0f
 #define CUBE_X AIMING_X
 #define CUBE_Y 3.5f
 #define CUBE_Z AIMING_Z
@@ -26,6 +27,7 @@ public:
 	bool bShotted;              // 発射フラグ
 	bool nShotted;              // 時間制限で未発射フラグ
 	bool bHit;                  // 命中フラグ
+	static bool bFlying;        // 飛行フラグ
 	VERTEX_3D *cubev;           // 頂点情報
 	TextureIndex texture_index; // テクスチャ
 	D3DXVECTOR3 pos;            // 現在位置

@@ -3,6 +3,7 @@
 #include "debug_font.h"
 #include "camera.h"
 #include "cube.h"
+#include "target.h"
 
 static Aiming aiming;
 static Number time;
@@ -30,15 +31,13 @@ void Aiming_Finalize()
 // Aimingの更新
 void Aiming_Update()
 {
-	// マウス情報の取得
-	DIMOUSESTATE *MouseState = GetMouseState();
-
 	// Aimingの操作
-	aiming.pos.x += MouseState->lX * 0.05f;
-	aiming.pos.y -= MouseState->lY * 0.05f;
+	aiming.pos.x += GetMouseX() * 0.05f;
+	aiming.pos.y -= GetMouseY() * 0.05f;
 
 	// 構え（矢の生成）
-	if (Keyboard_IsTrigger(DIK_LSHIFT) && !aiming.prepare && !camera->bZoom_Ready && !camera->bZoom_Back)
+	// 構え状態ではない、矢が飛行中ではない、ズーム前進ではない、ズーム後退ではない場合のみ、構え状態になれる
+	if (GetKeyboardTrigger(DIK_LSHIFT) && !aiming.prepare && !Cube::bFlying && !camera->bZoom_Forward && !camera->bZoom_Back)
 	{
 		Add_Cube(); // 矢の生成
 		aiming.prepare = true;
@@ -49,9 +48,12 @@ void Aiming_Update()
 	// 構え状態中
 	if (aiming.prepare)
 	{
-		// Cameraズーム前進
-		camera->Camera_Zoom_Forward();
-
+		// Cameraズーム前進（照準用）
+		//if (camera->zoom_cnt < ZOOM_MAX)
+		{
+			camera->Camera_Zoom_Forward();
+		}
+		
 		// カウントダウンを更新
 		timeCnt = TIME_COUNT_MAX - aiming.time_cnt->SystemTimer_GetTime();
 
@@ -81,7 +83,7 @@ void Aiming_Update()
 		if (camera->zoom_cnt >= ZOOM_MAX)
 		{
 			// 弓を引く（チャージ）
-			if (Keyboard_IsPress(DIK_Z))
+			if (GetKeyboardPress(DIK_Z))
 			{	// SPACEを押している間チャージする
 				if (aiming.charge_span < CHARGE_SPAN)
 				{
@@ -98,7 +100,7 @@ void Aiming_Update()
 		}
 
 		// 発射
-		if (Keyboard_IsTrigger(DIK_X) && aiming.charge_span > 0)
+		if (GetKeyboardTrigger(DIK_X) && aiming.charge_span > 0)
 		{
 			Cube *cube = Get_Cube();
 			for (int i = 0; i < CUBE_MAX; i++)
@@ -116,9 +118,14 @@ void Aiming_Update()
 			aiming.time_cnt = NULL;
 		}
 	}
-
-	// Cameraズーム後退
-	camera->Camera_Zoom_Back();
+	// 構え状態ではない
+	else
+	{
+		// Cameraズーム前進
+		camera->Camera_Zoom_Forward(TARGET_Z * TARGET_MAG_Z, ZOOM_INCREASING * 2);
+		// Cameraズーム後退
+		camera->Camera_Zoom_Back();
+	}
 }
 
 // Aimingの描画

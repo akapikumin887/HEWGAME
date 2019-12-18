@@ -1,8 +1,8 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
-#define SCREEN_WIDTH (1280)
-#define SCREEN_HEIGHT (960) 
+#define SCREEN_WIDTH (1920)
+#define SCREEN_HEIGHT (1080) 
 #define PLAYER_SIZE_COEFFICIENT 2.5f
 #define FPS_STANTARD 60.0f
 
@@ -11,7 +11,9 @@ typedef enum {
 	SCENE_TITLE,
 	SCENE_GAME,
 	SCENE_RESULT,
+	SCENE_RANKING,
 }SCENE;
 
 void SetScene(SCENE s);
+SCENE GetScene();
 #endif

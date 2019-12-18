@@ -22,6 +22,8 @@
 #include "input.h"
 #include "camera.h"
 #include "light.h"
+#include "fade.h"
+#include "title.h"
 #include "game.h"
 #include "ui.h"
 #include "score.h"
@@ -32,7 +34,7 @@
 #include "wall.h"
 #include "target.h"
 #include "aiming.h"
-
+#include "particle.h"
 
 //====================================================
 // 定数定義
@@ -149,8 +151,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	// Windowsゲーム用メインループ
 	MSG msg = {}; // msg.message == WM_NULL
 
-	Keyboard_Initialize(hInstance, g_hWnd);
-	Mouse_Initialize(hInstance, g_hWnd);
+	Input_Initialize(hInstance, g_hWnd);
 
 	while (WM_QUIT != msg.message)
 	{
@@ -196,10 +197,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_CLOSE:
+		//ShowCursor(true);
 		if (MessageBox(hWnd, "本当に終了してよろしいですか？", "確認", MB_OKCANCEL | MB_DEFBUTTON2) == IDOK)
 		{
 			DestroyWindow(hWnd); // 指定のウィンドウにWM_DESTROYメッセージを送る
 		}
+		//ShowCursor(false);
 		return 0; // DefWindowProc関数にメッセージを流さず終了することによって何もなかったことにする
 
 	case WM_DESTROY: // ウィンドウの破棄メッセージ
@@ -233,8 +236,7 @@ bool Initialize(void)
 		MessageBox(g_hWnd, "いくつか読み込めなかったテクスチャファイルがあります", "エラー", MB_OK);
 	}
 
-	Camera_Initialize();
-
+	//SetScene(SCENE_TITLE);
 	SetScene(SCENE_GAME);
 
 	InitSound(g_hWnd);
@@ -251,31 +253,38 @@ bool Initialize(void)
 	// フレーム固定用計測時間
 	g_StaticFrameTime = g_System_Time->SystemTimer_GetTime();
 
+	//ShowCursor(false);
 	return true;
 }
 
 // ゲームの更新関数
 void Update(void)
 {
-	Keyboard_Update();
-	Mouse_Update();
-	Camera_Update();
+	Input_Update();
+
 	Light_Update();
 
+	
 	switch (g_Scene)
 	{
 	case SCENE_TITLE:
-		
+		Title_Update();
 		break;
 	case SCENE_GAME:
-		Game_Update();
+		if (Get_Fade_State() != FADE_STATE_IN)
+		{
+			Game_Update();
+		}
 		break;
 	case SCENE_RESULT:
 
 		break;
-	default:
+	case SCENE_RANKING:
+		Ranking_Update();
 		break;
 	}
+
+	Fade_Update();
 }
 
 // ゲームの描画関数
@@ -289,8 +298,6 @@ void Draw(void)
 	// 描画バッチ命令の開始
 	pD3DDevice->BeginScene();
 
-	Camera_Draw();
-
 	Light_Draw();
 
 	DebugFont_Draw(640, 2, "Time: %.02lf", g_System_Time->SystemTimer_GetTime());
@@ -298,7 +305,7 @@ void Draw(void)
 	switch (g_Scene)
 	{
 	case SCENE_TITLE:
-		
+		Title_Draw();
 		break;
 	case SCENE_GAME:
 		Game_Draw();
@@ -306,9 +313,13 @@ void Draw(void)
 	case SCENE_RESULT:
 
 		break;
+	case SCENE_RANKING:
+		Ranking_Draw();
+		break;
 	default:
 		break;
 	}
+	Fade_Draw();
 	// 描画バッチ命令の終了
 	pD3DDevice->EndScene();
 
@@ -329,14 +340,12 @@ void Finalize(void)
 
 	UninitSound();
 
-	Camera_Finalize();
 	Light_Finalize();
 	Sprite_Finalize_2D();
 	Sprite_Finalize_3D();
 	Texture_Release();
 	// ゲームの終了処理(Direct3Dの終了処理)
-	Keyboard_Finalize();
-	Mouse_Finalize();
+	Input_Finalize();
 	DebugFont_Finalize();
 	SystemTimer_Finalize();
 	Mydirect3D_Finalize();
@@ -347,13 +356,16 @@ void SetScene(SCENE s)
 	switch (g_Scene)
 	{
 	case SCENE_TITLE:
-		
+		Title_Finalize();
 		break;
 	case SCENE_GAME:
 		Game_Finalize();
 		break;
 	case SCENE_RESULT:
 
+		break;
+	case SCENE_RANKING:
+		Ranking_Finalize();
 		break;
 	default:
 		break;
@@ -362,7 +374,7 @@ void SetScene(SCENE s)
 	switch (s)
 	{
 	case SCENE_TITLE:
-		
+		Title_Initialize();
 		break;
 	case SCENE_GAME:
 		Game_Initialize();
@@ -370,8 +382,16 @@ void SetScene(SCENE s)
 	case SCENE_RESULT:
 
 		break;
+	case SCENE_RANKING:
+		Ranking_Initialize();
+		break;
 	default:
 		break;
 	}
 	g_Scene = s;
+}
+
+SCENE GetScene()
+{
+	return g_Scene;
 }

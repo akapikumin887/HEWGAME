@@ -12,6 +12,8 @@
 #ifndef WALL_H_
 #define WALL_H_
 
+#define WALLMOVE 1.0f
+
 class Wall
 {
 public:
@@ -20,8 +22,6 @@ public:
 	D3DXVECTOR3 pos;            // 位置
 	D3DXVECTOR3 rot;            // 回転
 	D3DXVECTOR3 scl;            // 大きさ
-	D3DXVECTOR3 size;           // サイズ
-	D3DXVECTOR3 size_nor;       // 単位サイズ
 	bool revolution;            // 公転フラグ
 	D3DXVECTOR3 revRadius;      // 公転半径
 	D3DXVECTOR3 revSpd;         // 公転速度
@@ -31,7 +31,6 @@ public:
 
 	void Draw_Wall(); // Wallの描画
 	void Set_Wall(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, // Wallのテクスチャ・位置・回転・大きさの設定
-		D3DXVECTOR3 sz, D3DXVECTOR3 szn, // Wallのサイズ・単位サイズの設定
 		bool Revolution = false, D3DXVECTOR3 RevRadius = D3DXVECTOR3(0, 0, 0), D3DXVECTOR3 RevSpd = D3DXVECTOR3(0, 0, 0)); // Wallの公転フラグ・公転半径・公転速度の設定
 	float Rotation_Correction(float r); // Wallの回転の補正
 };

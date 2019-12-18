@@ -16,6 +16,11 @@ typedef struct TextureFile_tag
 
 // テクスチャ配列
 static const TextureFile g_TextureFiles[] = {
+	{ "asset/texture/bg00.tga", 1920, 1080 },
+	{ "asset/texture/title00.jpg", 1920, 1080 },
+	{ "asset/texture/title01.jpg", 1920, 1080 },
+	{ "asset/texture/title_start.jpg", 1024, 220 },
+	{ "asset/texture/title_ranking.jpg", 1024, 220 },
 	{ "asset/texture/KIZUNA.jpg", 256, 256 },
 	{ "asset/texture/airou.png", 256, 256 },
 	{ "asset/texture/aiming.png", 64, 64 },

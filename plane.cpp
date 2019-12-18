@@ -5,7 +5,7 @@ static Plane plane;
 // PlaneÇÃèâä˙âª
 void Plane_Initialize()
 {
-	plane.Set_Plane(TEXTURE_INDEX_MAX, D3DXVECTOR3(0.0f, -10.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(100.0f, 0.0f, 200.0f), D3DXVECTOR3(0.5f, 0.5f, 0.5f));
+	plane.Set_Plane(TEXTURE_INDEX_KIZUNA, D3DXVECTOR3(0.0f, -10.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(100.0f, 0.0f, 100.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 }
 
 // PlaneÇÃèIóπèàóù
