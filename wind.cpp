@@ -1,44 +1,34 @@
 #include "wind.h"
 #include "debug_font.h"
-#include "cube.h"
+#include "arrow.h"
 
-static Wind wind;
-static int cnt = CUBE_MAX;
+D3DXVECTOR3 Wind::speed;
 
 // Wind‚Ì‰Šú‰»
-void Wind_Initialize()
+void Wind::Initialize()
 {
-	wind.speed = D3DXVECTOR3(0.0f, 0.0f, 0.0f) / WIND_FORCE_MAG;
+	speed = D3DXVECTOR3(((rand() % 16) * 1.0f + 5.0f) / 2, 0.0f, 0.0f) / WIND_FORCE_MAG;
+
+	if (rand() % 2 == 0)
+	{
+		speed *= -1;
+	}
 }
 
 // Wind‚ÌI—¹ˆ—
-void Wind_Finalize()
+void Wind::Finalize()
 {
 
 }
 
 // Wind‚ÌXV
-void Wind_Update()
+void Wind::Update()
 {
-	Cube *cube = Get_Cube();
-	if (cnt != Cube::cnt)
-	{
-		wind.speed = D3DXVECTOR3(((rand() % 16) * 1.0f + 5.0f) / 2, 0.0f, 0.0f) / WIND_FORCE_MAG;
-		if (rand() % 2 == 0)
-		{
-			wind.speed *= -1.0f;
-		}
-	}
-	cnt = Cube::cnt;
+	
 }
 
 // Wind‚Ì•`‰æ
-void Wind_Draw()
+void Wind::Draw()
 {
-	DebugFont_Draw(640, 62, "wind: %.01lf", wind.speed.x * WIND_FORCE_MAG);
-}
-
-Wind* Get_Wind()
-{
-	return &wind;
+	
 }

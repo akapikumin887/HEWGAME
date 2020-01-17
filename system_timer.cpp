@@ -1,25 +1,18 @@
 #include <Windows.h>
 #include "system_timer.h"
 
-static Timer *timer;
 
 //====================================================
 // 関数定義
 //====================================================
-// システムタイマーの初期化
-void SystemTimer_Initialize(void)
-{
-	timer = new Timer;
-}
-
-// システムタイマーの終了処理
-void SystemTimer_Finalize(void)
-{
-	delete timer;
-}
-
 // Timeの初期化（コンストラクタ）
 Timer::Timer()
+{
+
+}
+
+// システムタイマーの初期化
+void Timer::SystemTimer_Initialize(void)
 {
 	bTimerStopped = true;
 	TicksPerSec = 0;
@@ -31,6 +24,12 @@ Timer::Timer()
 	LARGE_INTEGER ticksPerSec = { 0 };
 	QueryPerformanceFrequency(&ticksPerSec);
 	TicksPerSec = ticksPerSec.QuadPart;
+}
+
+// システムタイマーの終了処理
+void Timer::SystemTimer_Finalize(void)
+{
+
 }
 
 void Timer::SystemTimer_Reset(void)
@@ -147,10 +146,4 @@ LARGE_INTEGER Timer::GetAdjustedCurrentTime(void)
 		QueryPerformanceCounter(&time);
 	}
 	return time;
-}
-
-// Time情報の取得
-Timer* Get_Time()
-{
-	return timer;
 }

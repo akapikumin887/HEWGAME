@@ -1,67 +1,25 @@
 #include "target.h"
-#include "camera.h"
+#include "tool_functions.h"
 
-static Target target;
-
-// Targetの初期化
-void Target_Initialize()
-{
-	target.Set_Target(TEXTURE_INDEX_TARGET, D3DXVECTOR3(TARGET_X, TARGET_Y, TARGET_Z * TARGET_MAG_Z), D3DXVECTOR3(270.0f, 0.0f, 0.0f), D3DXVECTOR3(TARGET_SIZE, 1.0f, TARGET_SIZE));
-}
-
-// Targetの終了処理
-void Target_Finalize()
-{
-
-}
-
-// Targetの更新
-void Target_Update()
-{
-	
-}
-
-// Targetの描画
-void Target_Draw()
-{
-	target.Draw_Target();
-}
-
-// Target情報の取得
-Target* Get_Target()
-{
-	return &target;
-}
-
-// Targetの頂点情報取得（コンストラクタ）
+// Targetの初期化（コンストラクタ）
 Target::Target()
 {
-	targetv = new VERTEX_3D;
+	face = new Face;
 }
 
-// Targetの頂点情報のリリース（デストラクタ）
+// Targetの終了処理（デストラクタ）
 Target::~Target()
 {
-	delete targetv;
+	delete face;
 }
 
-// Targetの描画
-void Target::Draw_Target()
+void Target::Initialize(TextureIndex tex_idx, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 sz)
 {
-	targetv->Sprite_Draw_Face(texture_index, pos, rot, scl, revolution, revRadius, revSpd);
-	targetv->Sprite_Draw_Face(texture_index, D3DXVECTOR3(CAMERAEYE_X, CAMERAEYE_Y + 120.0f, CAMERAEYE_Z), D3DXVECTOR3(180, 0, 0), scl, revolution, revRadius, revSpd);
-}
-
-// Targetのセット
-void Target::Set_Target(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd)
-{
-	texture_index = textureindex;
-	pos = p;
-	rot = r;
-	scl = s;
-	revolution = Revolution;
-	revRadius = RevRadius;
-	revSpd = RevSpd;
+	texture_index = tex_idx;
+	pos = D3DXVECTOR3(p.x, p.y, p.z);
+	rot = D3DXVECTOR3(r.x, r.y, r.z);
+	
+	face->CreateFace(sz);
 
 	// 各環の半径を初期化
 	float c = TARGET_SIZE / 20;
@@ -76,8 +34,27 @@ void Target::Set_Target(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r,
 	}
 }
 
-// Targetの回転の補正
-float Target::Rotation_Correction(float r)
+void Target::Finalize()
 {
-	return targetv->Rotation_Correction(r);
+	
+}
+
+void Target::Update()
+{
+
+}
+
+void Target::Draw()
+{
+	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
+
+	D3DXMatrixIdentity(&mtxWorld); // ワールド行列を単位行列に初期化
+
+	mtxWorld = Set_Mtx_Scl(mtxWorld);
+	mtxWorld = Set_Mtx_Rot(mtxWorld, rot);
+	mtxWorld = Set_Mtx_Trs(mtxWorld, pos);
+
+	pDevice->SetTransform(D3DTS_WORLD, &mtxWorld); // ワールドマトリックスを設定
+
+	face->Draw(texture_index);
 }

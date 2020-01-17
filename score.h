@@ -1,3 +1,4 @@
+#pragma once
 #include <windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -13,16 +14,21 @@
 #ifndef Score_H_
 #define Score_H_
 
-class Score :public Alphabet
+class Score
 {
 public:
-	char sa[8];
-};
+	Number   *num;
+	Alphabet *alpha;
+	int      s[5];
 
-void Score_Initialize(); // Scoreの初期化
-void Score_Finalize(); // Scoreの終了処理
-void Score_Update(); // Scoreの更新
-void Score_Draw(); // Scoreの描画
-void Add_Score(int s); // Scoreの加算
-Number* Get_Score(); // Score情報の取得
+	Score();  // Scoreの初期化（コンストラクタ）
+	~Score(); // Scoreの終了処理（デストラクタ）
+
+	void Initialize(); // Scoreの初期化
+	void Finalize();   // Scoreの終了処理
+	void Update();     // Scoreの更新
+	void Draw();       // Scoreの描画
+
+	void Add_Score(int s); // Scoreの加算
+};
 #endif

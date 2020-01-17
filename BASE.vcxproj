@@ -20,9 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aiming.h" />
+    <ClInclude Include="arrow.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="common.h" />
-    <ClInclude Include="cube.h" />
     <ClInclude Include="debug_font.h" />
     <ClInclude Include="fade.h" />
     <ClInclude Include="game.h" />
@@ -30,24 +30,24 @@
     <ClInclude Include="HitCheck.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="light.h" />
+    <ClInclude Include="mode.h" />
     <ClInclude Include="mydirect3d.h" />
-    <ClInclude Include="particle.h" />
     <ClInclude Include="plane.h" />
     <ClInclude Include="score.h" />
-    <ClInclude Include="sound.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="system_timer.h" />
     <ClInclude Include="target.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="title.h" />
+    <ClInclude Include="tool_functions.h" />
     <ClInclude Include="ui.h" />
-    <ClInclude Include="wall.h" />
     <ClInclude Include="wind.h" />
     <ClInclude Include="xmodel.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="aiming.cpp" />
+    <ClCompile Include="arrow.cpp" />
     <ClCompile Include="camera.cpp" />
-    <ClCompile Include="cube.cpp" />
     <ClCompile Include="debug_font.cpp" />
     <ClCompile Include="fade.cpp" />
     <ClCompile Include="game.cpp" />
@@ -56,19 +56,17 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mode.cpp" />
     <ClCompile Include="mydirect3d.cpp" />
-    <ClCompile Include="particle.cpp" />
     <ClCompile Include="plane.cpp" />
     <ClCompile Include="score.cpp" />
-    <ClCompile Include="sound.cpp" />
-    <ClCompile Include="aiming.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="system_timer.cpp" />
     <ClCompile Include="target.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="title.cpp" />
+    <ClCompile Include="tool_functions.cpp" />
     <ClCompile Include="ui.cpp" />
-    <ClCompile Include="wall.cpp" />
     <ClCompile Include="wind.cpp" />
     <ClCompile Include="xmodel.cpp" />
   </ItemGroup>

@@ -18,29 +18,28 @@
 #include "debug_font.h"
 #include "time.h"
 #include "system_timer.h"
-#include "sound.h"
 #include "input.h"
+#include "tool_functions.h"
 #include "camera.h"
 #include "light.h"
-#include "fade.h"
 #include "title.h"
+#include "mode.h"
 #include "game.h"
-#include "ui.h"
-#include "score.h"
+#include "plane.h"
+#include "aiming.h"
+#include "arrow.h"
+#include "target.h"
 #include "gravility.h"
 #include "wind.h"
-#include "cube.h"
-#include "plane.h"
-#include "wall.h"
-#include "target.h"
-#include "aiming.h"
-#include "particle.h"
+#include "ui.h"
+#include "score.h"
+#include "fade.h"
 
 //====================================================
 // 定数定義
 //====================================================
 #define CLASS_NAME     "GameWindow"       // ウインドウクラスの名前
-#define WINDOW_CAPTION "BASEDX" // ウィンドウの名前
+#define WINDOW_CAPTION "MOUSEで照準　LSHIFTで構え　Zで発射　Cで自由状態　Jでスピードダウン　Kでスピードアップ　RSHIFTでゲームリセット　ENTERでカメラリセット" // ウィンドウの名前
 #define FPS_MEASUREMENT_TIME (1.0f)       // FPS計測時間
 
 //====================================================
@@ -69,7 +68,7 @@ static LPDIRECT3DTEXTURE9 g_pTexture = NULL; // テクスチャインターフェース
 
 static float g_UVScrollValue = 0.0f;
 
-static Timer *g_System_Time;
+static Timer g_System_Time;
 static int g_FrameCount = 0; // フレームカウンター
 static double g_StaticFrameTime = 0.0f; // フレーム固定用計測時間
 SCENE g_Scene = SCENE_NONE;
@@ -162,7 +161,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		}
 		else {
 			// 現在のシステム時間を取得
-			double time = g_System_Time->SystemTimer_GetTime();
+			double time = g_System_Time.SystemTimer_GetTime();
 
 			if (time - g_StaticFrameTime < 1.0 / FPS_STANTARD) {
 				// 1 / 60 秒経っていなかったら空回り
@@ -236,24 +235,40 @@ bool Initialize(void)
 		MessageBox(g_hWnd, "いくつか読み込めなかったテクスチャファイルがあります", "エラー", MB_OK);
 	}
 
-	//SetScene(SCENE_TITLE);
-	SetScene(SCENE_GAME);
+	SetScene(SCENE_TITLE);
+	//SetScene(SCENE_MODE);
+	//SetScene(SCENE_GAME);
 
-	InitSound(g_hWnd);
+	//InitSound(g_hWnd);
 
 	Light_Initialize();
 	
 	// システムタイマーの初期化
-	SystemTimer_Initialize();
-	g_System_Time = Get_Time();
+	g_System_Time.SystemTimer_Initialize();
 
 	// システムタイマーの起動
-	g_System_Time->SystemTimer_Start();
+	g_System_Time.SystemTimer_Start();
 
 	// フレーム固定用計測時間
-	g_StaticFrameTime = g_System_Time->SystemTimer_GetTime();
+	g_StaticFrameTime = g_System_Time.SystemTimer_GetTime();
 
-	//ShowCursor(false);
+	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
+
+	// レンダーステートパラメータの設定
+	//pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);           // 裏面をカリング
+	//pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);                   // Zバッファを使用
+	pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);			// αブレンドを行う
+	//pDevice->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);         // default値
+	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// αソースカラーの指定
+	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// αデスティネーションカラーの指定
+
+	// サンプラーステートパラメータの設定
+	pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);// テクスチャアドレッシング方法(U値)を設定
+	pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);// テクスチャアドレッシング方法(V値)を設定
+	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	// テクスチャ縮小フィルタモードを設定
+	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	// テクスチャ拡大フィルタモードを設定
+
+	ShowCursor(false);
 	return true;
 }
 
@@ -265,26 +280,31 @@ void Update(void)
 	Light_Update();
 
 	
-	switch (g_Scene)
+	if (Get_Fade_State() == FADE_STATE_NONE)
 	{
-	case SCENE_TITLE:
-		Title_Update();
-		break;
-	case SCENE_GAME:
-		if (Get_Fade_State() != FADE_STATE_IN)
+		switch (g_Scene)
 		{
+		case SCENE_TITLE:
+			Title_Update();
+			break;
+		case SCENE_MODE:
+			Mode_Update();
+			break;
+		case SCENE_GAME:
 			Game_Update();
+			break;
+		case SCENE_RESULT:
+
+			break;
+		case SCENE_RANKING:
+			//Ranking_Update();
+			break;
 		}
-		break;
-	case SCENE_RESULT:
-
-		break;
-	case SCENE_RANKING:
-		Ranking_Update();
-		break;
 	}
-
-	Fade_Update();
+	else
+	{
+		Fade_Update();
+	}
 }
 
 // ゲームの描画関数
@@ -300,12 +320,15 @@ void Draw(void)
 
 	Light_Draw();
 
-	DebugFont_Draw(640, 2, "Time: %.02lf", g_System_Time->SystemTimer_GetTime());
+	DebugFont_Draw(640, 2, "Time: %.02lf", g_System_Time.SystemTimer_GetTime());
 
 	switch (g_Scene)
 	{
 	case SCENE_TITLE:
 		Title_Draw();
+		break;
+	case SCENE_MODE:
+		Mode_Draw();
 		break;
 	case SCENE_GAME:
 		Game_Draw();
@@ -314,12 +337,14 @@ void Draw(void)
 
 		break;
 	case SCENE_RANKING:
-		Ranking_Draw();
+		//Ranking_Draw();
 		break;
 	default:
 		break;
 	}
+	
 	Fade_Draw();
+
 	// 描画バッチ命令の終了
 	pD3DDevice->EndScene();
 
@@ -338,16 +363,15 @@ void Finalize(void)
 		Mydirect3D_Finalize();
 	}
 
-	UninitSound();
+	//UninitSound();
 
 	Light_Finalize();
 	Sprite_Finalize_2D();
-	Sprite_Finalize_3D();
 	Texture_Release();
 	// ゲームの終了処理(Direct3Dの終了処理)
 	Input_Finalize();
 	DebugFont_Finalize();
-	SystemTimer_Finalize();
+	g_System_Time.SystemTimer_Finalize();
 	Mydirect3D_Finalize();
 }
 
@@ -358,6 +382,9 @@ void SetScene(SCENE s)
 	case SCENE_TITLE:
 		Title_Finalize();
 		break;
+	case SCENE_MODE:
+		Mode_Finalize();
+		break;
 	case SCENE_GAME:
 		Game_Finalize();
 		break;
@@ -365,7 +392,7 @@ void SetScene(SCENE s)
 
 		break;
 	case SCENE_RANKING:
-		Ranking_Finalize();
+		//Ranking_Finalize();
 		break;
 	default:
 		break;
@@ -376,6 +403,9 @@ void SetScene(SCENE s)
 	case SCENE_TITLE:
 		Title_Initialize();
 		break;
+	case SCENE_MODE:
+		Mode_Initialize();
+		break;
 	case SCENE_GAME:
 		Game_Initialize();
 		break;
@@ -383,7 +413,7 @@ void SetScene(SCENE s)
 
 		break;
 	case SCENE_RANKING:
-		Ranking_Initialize();
+		//Ranking_Initialize();
 		break;
 	default:
 		break;

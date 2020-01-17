@@ -1,3 +1,4 @@
+#pragma once
 #include <windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -9,30 +10,11 @@
 #include "sprite.h"
 #include "texture.h"
 
-#ifndef TITLE_H_
-#define TITLE_H_
+#ifndef _TITLE_H_
+#define _TITLE_H_
 
-class Title
-{
-public:
-	bool bUse;                 // 使用中フラグ
-	D3DXVECTOR3 pos;           // 表示座標
-	D3DCOLOR color;	           // カラー
-	TextureIndex Texture_Index; // テクスチャID
-	int	tx, ty;	               // テクスチャ貼り付け左上座標
-	int	tw, th;	               // テクスチャ貼り付けサイズ
-
-	Title();
-	~Title();
-
-	void Initialize(TextureIndex idx, D3DXVECTOR2 p = D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f));
-	void Fade_Move_Up();
-	void Fade_Move_Down();
-};
-
-void Title_Initialize(); // Titleの初期化
-void Title_Finalize(); // Titleの終了処理
-void Title_Update(); // Titleの更新
-void Title_Draw(); // Titleの描画
-
+void Title_Initialize(void);
+void Title_Finalize(void);
+void Title_Update(void);
+void Title_Draw(void);
 #endif

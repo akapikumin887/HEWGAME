@@ -1,66 +1,50 @@
 #include "plane.h"
 
-static Plane plane;
+// Planeの初期化（コンストラクタ）
+Plane::Plane()
+{
+	faceEX = new FaceEX;
+}
+
+// Planeの終了処理（デストラクタ）
+Plane::~Plane()
+{
+	delete faceEX;
+}
 
 // Planeの初期化
-void Plane_Initialize()
+void Plane::Initialize(TextureIndex tex_idx, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 sz, D3DXVECTOR3 szn)
 {
-	plane.Set_Plane(TEXTURE_INDEX_KIZUNA, D3DXVECTOR3(0.0f, -10.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), D3DXVECTOR3(100.0f, 0.0f, 100.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	texture_index = tex_idx;
+	pos = D3DXVECTOR3(p.x, p.y, p.z);
+	rot = D3DXVECTOR3(r.x, r.y, r.z);
+	faceEX->CreateFaceEX(sz, szn);
 }
 
 // Planeの終了処理
-void Plane_Finalize()
+void Plane::Finalize()
 {
 
 }
 
 // Planeの更新
-void Plane_Update()
+void Plane::Update()
 {
-	
+
 }
 
 // Planeの描画
-void Plane_Draw()
+void Plane::Draw()
 {
-	plane.Draw_Plane();
-}
+	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 
-// Planeの頂点情報取得（コンストラクタ）
-Plane::Plane()
-{
-	planev = new VERTEX_3D;
-}
+	D3DXMatrixIdentity(&mtxWorld); // ワールド行列を単位行列に初期化
 
-// Planeの頂点情報のリリース（デストラクタ）
-Plane::~Plane()
-{
-	delete planev;
-}
+	mtxWorld = Set_Mtx_Scl(mtxWorld);
+	mtxWorld = Set_Mtx_Rot(mtxWorld, rot);
+	mtxWorld = Set_Mtx_Trs(mtxWorld, pos);
 
-// Planeの描画
-void Plane::Draw_Plane()
-{
-	planev->Sprite_Draw_FaceEX(texture_index, pos, rot, scl, size, size_nor,revolution, revRadius, revSpd);
-}
+	pDevice->SetTransform(D3DTS_WORLD, &mtxWorld); // ワールドマトリックスを設定
 
-// Planeのセット
-void Plane::Set_Plane(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, D3DXVECTOR3 sz, D3DXVECTOR3 szn, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd)
-{
-	planev->CreateFaceEX(sz, szn);
-	texture_index = textureindex;
-	pos = p;
-	rot = r;
-	scl = s;
-	size = sz;
-	size_nor = szn;
-	revolution = Revolution;
-	revRadius = RevRadius;
-	revSpd = RevSpd;
-}
-
-// Planeの回転の補正
-float Plane::Rotation_Correction(float r)
-{
-	return planev->Rotation_Correction(r);
+	faceEX->Draw(texture_index);
 }

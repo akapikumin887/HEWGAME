@@ -1,3 +1,4 @@
+#pragma once
 #ifndef SYSTEM_TIMER_H_
 #define SYSTEM_TIMER_H_
 
@@ -11,6 +12,8 @@ public:
 	LONGLONG BaseTime;        // 基本時間
 
 	Timer();
+	void SystemTimer_Initialize(void); // システムタイマーの初期化
+	void SystemTimer_Finalize(void); // システムタイマーの終了処理
 	void SystemTimer_Reset(void); // システムタイマーのリセット
 	void SystemTimer_Start(void); // システムタイマーのスタート
 	void SystemTimer_Stop(void); // システムタイマーのストップ
@@ -25,8 +28,5 @@ public:
 //====================================================
 // 関数のプロトタイプ宣言
 //====================================================
-void SystemTimer_Initialize(void); // システムタイマーの初期化
-void SystemTimer_Finalize(void); // システムタイマーの終了処理
 void LimitThreadAffinityToCurrentProc(void); // 現在のスレッドを1つのプロセッサ（現在のスレッド）に制限
-Timer* Get_Time(); // Time情報の取得
 #endif // SYSTEM_TIMER_H_

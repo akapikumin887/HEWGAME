@@ -1,3 +1,4 @@
+#pragma once
 #ifndef DEBUG_FONT_H_
 #define DEBUG_FONT_H_
 

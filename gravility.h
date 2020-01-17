@@ -1,3 +1,4 @@
+#pragma once
 #include <windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -18,12 +19,11 @@
 class Gravility
 {
 public:
-	D3DXVECTOR3 g; // Gravility
-};
+	static D3DXVECTOR3 g; // Gravility
 
-void Gravility_Initialize(); // Gravilityの初期化
-void Gravility_Finalize(); // Gravilityの終了処理
-void Gravility_Update(); // Gravilityの更新
-void Gravility_Draw(); // Gravilityの描画
-Gravility* Get_Gravility(); // Gravility情報の取得
+	static void Initialize(); // Gravilityの初期化
+	static void Finalize();   // Gravilityの終了処理
+	static void Update();     // Gravilityの更新
+	static void Draw();       // Gravilityの描画
+};
 #endif

@@ -1,3 +1,4 @@
+#pragma once
 #include <windows.h>
 #include <math.h>	//sin cos‚ðŽg‚¤‚Ì‚É•K—v
 #include "common.h"

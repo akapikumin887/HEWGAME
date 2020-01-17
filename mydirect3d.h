@@ -1,3 +1,4 @@
+#pragma once
 // DirectXŠÖ˜A‚Ìˆ—‚ğ‚Ü‚Æ‚ß‚é
 #include <windows.h>
 #include <d3d9.h>

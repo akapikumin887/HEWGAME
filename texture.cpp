@@ -16,14 +16,19 @@ typedef struct TextureFile_tag
 
 // テクスチャ配列
 static const TextureFile g_TextureFiles[] = {
-	{ "asset/texture/bg00.tga", 1920, 1080 },
-	{ "asset/texture/title00.jpg", 1920, 1080 },
-	{ "asset/texture/title01.jpg", 1920, 1080 },
-	{ "asset/texture/title_start.jpg", 1024, 220 },
-	{ "asset/texture/title_ranking.jpg", 1024, 220 },
+	{ "asset/texture/bg00.tga", SCREEN_WIDTH, SCREEN_HEIGHT },
+	{ "asset/texture/title00.jpg", SCREEN_WIDTH, SCREEN_HEIGHT },
+	{ "asset/texture/title01.jpg", SCREEN_WIDTH, SCREEN_HEIGHT },
+	{ "asset/texture/title_start.jpg", 512, 110 },
+	{ "asset/texture/title_ranking.jpg", 512, 110 },
+	{ "asset/texture/title_arrow.png", 160, 120 },
+	{ "asset/texture/mode_easy.jpg", 724, 1024 },
+	{ "asset/texture/mode_normal.jpg", 724, 1024 },
+	{ "asset/texture/mode_hard.jpg", 724, 1024 },
+	{ "asset/texture/mode_select.png", 724, 1024 },
 	{ "asset/texture/KIZUNA.jpg", 256, 256 },
 	{ "asset/texture/airou.png", 256, 256 },
-	{ "asset/texture/aiming.png", 64, 64 },
+	{ "asset/texture/aiming.png", 128, 128 },
 	{ "asset/texture/target.png", 512, 512 },
 	{ "asset/texture/number.png", 320, 32 },
 	{ "asset/texture/alphabet.png", 416, 64 }

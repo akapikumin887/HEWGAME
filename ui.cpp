@@ -1,50 +1,63 @@
 #include "ui.h"
 #include "score.h"
 
+// UI
 // UIの初期化
-void UI_Initialize()
+void UI::Initialize(TextureIndex tex_idx, D3DXVECTOR2 s, D3DXVECTOR2 p,int t_x,int t_y,int t_w,int t_h, D3DCOLOR c)
 {
-	Score_Initialize();
+	texture_index = tex_idx;
+	size = s;
+	pos = p;
+	tx = t_x;
+	ty = t_y;
+	tw = Texture_GetWidth(texture_index) / t_w;
+	th = Texture_GetHeight(texture_index) / t_h;
+	color = c;
 }
 
 // UIの終了処理
-void UI_Finalize()
+void UI::Finalize()
 {
-	Score_Finalize();
+
 }
 
 // UIの更新
-void UI_Update()
+void UI::Update()
 {
-	Score_Update();
+
 }
 
 // UIの描画
-void UI_Draw()
+void UI::Draw()
 {
-	Score_Draw();
+	Sprite_SetColor_2D(color); // 色のセット
+	Sprite_Draw_Matrix_2D(texture_index, size, pos, tx, ty, tw, th, 0.0f);
 }
+
+
+
+
+
 
 Number::Number()
 {
 	n = 0;
-	n_tmp = 0;
-	color = D3DCOLOR_RGBA(255, 255, 255, 255);
-	TextureIndex = TEXTURE_INDEX_NUMBER;
-	pos = D3DXVECTOR3(Texture_GetWidth(TextureIndex) / 10 / 2.0f, Texture_GetHeight(TextureIndex) / 2.0f, 0.0f);
+	texture_index = TEXTURE_INDEX_NUMBER;
+	pos = D3DXVECTOR2(Texture_GetWidth(texture_index) / 10 / 2.0f, Texture_GetHeight(texture_index) / 2.0f);
 	tx = 0;
 	ty = 0;
-	tw = Texture_GetWidth(TextureIndex) / 10;
-	th = Texture_GetHeight(TextureIndex);
+	tw = Texture_GetWidth(texture_index) / 10;
+	th = Texture_GetHeight(texture_index);
+	color = D3DCOLOR_RGBA(255, 255, 255, 255);
 }
 
 Alphabet::Alphabet()
 {
-	color = D3DCOLOR_RGBA(255, 255, 255, 255);
-	TextureIndex = TEXTURE_INDEX_ALPHABET;
-	pos = D3DXVECTOR3(Texture_GetWidth(TextureIndex) / 13 / 2.0f, Texture_GetHeight(TextureIndex) / 2 / 2.0f, 0.0f);
+	texture_index = TEXTURE_INDEX_ALPHABET;
+	pos = D3DXVECTOR2(Texture_GetWidth(texture_index) / 13 / 2.0f, Texture_GetHeight(texture_index) / 2 / 2.0f);
 	tx = 0;
 	ty = 0;
-	tw = Texture_GetWidth(TextureIndex) / 13;
-	th = Texture_GetHeight(TextureIndex) / 2;
+	tw = Texture_GetWidth(texture_index) / 13;
+	th = Texture_GetHeight(texture_index) / 2;
+	color = D3DCOLOR_RGBA(255, 255, 255, 255);
 }

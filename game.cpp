@@ -1,53 +1,40 @@
 #include "game.h"
 #include "input.h"
-#include "camera.h"
-#include "ui.h"
-#include "gravility.h"
-#include "wind.h"
-#include "cube.h"
-#include "plane.h"
-#include "wall.h"
-#include "target.h"
-#include "aiming.h"
-#include "particle.h"
+#include "tool_functions.h"
+#include "fade.h"
 
-//static PARTICLE particle;
+static CameraFP cameraFP;
+static Plane plane;
+static Aiming2D aiming;
+static Target target;
+
+// 共通GameObjectのバッファ生成
+void Game_Object_Create_Public()
+{
+	
+}
 
 // Gameの初期化
 void Game_Initialize()
 {
-	Camera_Initialize();
-	CreateFace();
-	//CreateBillboard();
-	CreateCube();
-	Gravility_Initialize();
-	Wind_Initialize();
-	Cube_Initialize();
-	Plane_Initialize();
-	Target_Initialize();
-	Aiming_Initialize();
-	UI_Initialize();
+	Game_Object_Create_Public();
 
-	/*Plane_Initialize();
-	Wall_Initialize();*/
-	//particle.Init(100);
+	cameraFP.Initialize();
+	plane.Initialize(TEXTURE_INDEX_MAX, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(20.0f, 0.0f, 30.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	target.Initialize();
+	aiming.Initialize();
+	ArrowManager::Initialize(ARROW_MAX);
+	Gravility::Initialize();
 }
 
 // Gameの終了処理
 void Game_Finalize()
 {
-	Camera_Finalize();
-	Gravility_Finalize();
-	Wind_Finalize();
-	Cube_Finalize();
-	Plane_Finalize();
-	Target_Finalize();
-	Aiming_Finalize();
-	UI_Finalize();
-
-	/*Plane_Finalize();
-	Wall_Finalize();*/
-	//particle.Uninit();
+	cameraFP.Finalize();
+	plane.Finalize();
+	target.Finalize();
+	aiming.Finalize();
+	ArrowManager::Finalize();
 }
 
 // Gameの更新
@@ -59,23 +46,32 @@ void Game_Update()
 		SetScene(SCENE_GAME);
 		return;
 	}
+	
 	if (GetKeyboardTrigger(DIK_0))
 	{
-		SetScene(SCENE_RANKING);
+		Fade(SCENE_RANKING);
 		return;
 	}
-	Camera_Update();
-	Gravility_Update();
-	Wind_Update();
-	Cube_Update();
-	Plane_Update();
-	Target_Update();
-	Aiming_Update();
-	UI_Update();
 
-	//Plane_Update();
-	//Wall_Update();
-	//particle.Update();
+	if (ArrowManager::cnt == ARROW_MAX && GetKeyboardTrigger(DIK_C) && aiming.state == AIMING_STATE_FREE || GetKeyboardTrigger(DIK_T))
+	{
+		SetScene(SCENE_TITLE);
+		return;
+	}
+
+	// CameraFPの更新
+	cameraFP.Update();
+
+	// Planeの更新
+	plane.Update();
+
+	// Targetの更新
+	target.Update();
+	
+	// Aiming3Dの更新
+	aiming.Update();
+
+	ArrowManager::Update();
 }
 
 // Gameの描画
@@ -83,16 +79,29 @@ void Game_Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-	Camera_Draw();
-	Gravility_Draw();
-	Wind_Draw();
-	Cube_Draw();
-	Plane_Draw();
-	Target_Draw();
-	Aiming_Draw();
-	UI_Draw();
 
-	//Plane_Draw();
-	//Wall_Draw();
-	//particle.Draw();
+	cameraFP.Draw();
+	plane.Draw();
+	target.Draw();
+	
+	ArrowManager::Draw();
+	aiming.Draw();
+}
+
+// CameraFP情報の取得
+CameraFP* Get_Game_CameraFP()
+{
+	return &cameraFP;
+}
+
+// Aiming3D情報の取得
+Aiming2D* Get_Game_Aiming()
+{
+	return &aiming;
+}
+
+// Target情報の取得
+Target* Get_Game_Target()
+{
+	return &target;
 }

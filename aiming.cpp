@@ -1,168 +1,126 @@
 #include "aiming.h"
-#include "input.h"
 #include "debug_font.h"
-#include "camera.h"
-#include "cube.h"
-#include "target.h"
+#include "input.h"
+#include "tool_functions.h"
+#include "game.h"
 
-static Aiming aiming;
-static Number time;
-static AimingTime alphabet;
-static Camera *camera;
-static double timeCnt;
+double Aiming2D::timeCnt;
 
-// Aimingの初期化
-void Aiming_Initialize()
+// Aiming2D
+// Aiming2Dの初期化（コンストラクタ）
+Aiming2D::Aiming2D()
 {
-	aiming.Set_Aiming(TEXTURE_INDEX_AIMING, D3DXVECTOR3(AIMING_X, AIMING_Y, AIMING_Z * AIMING_MAG_Z), D3DXVECTOR3(270.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	timer = NULL;
+	num = new Number;
+	alpha = new Alphabet;
+}
+
+// Aiming2Dの終了処理（デストラクタ）
+Aiming2D::~Aiming2D()
+{
+	if (timer != NULL)
+	{
+		delete timer;
+		timer = NULL;
+	}
+	delete num;
+	delete alpha;
+}
+
+// Aiming2Dの初期化
+void Aiming2D::Initialize()
+{
+	texture_index = TEXTURE_INDEX_AIMING;
+	pos = D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f);
+	color = D3DCOLOR_RGBA(255, 255, 255, 255);
+	tx = 0;
+	ty = 0;
+	tw = Texture_GetWidth(texture_index);
+	th = Texture_GetHeight(texture_index);
+
+	state = AIMING_STATE_FREE;
 
 	// Alphabetの初期化
-	strncpy(alphabet.ta, "TIME", 8);
-	alphabet.len = strlen(alphabet.ta);
-	camera = Get_Camera();
+	strncpy(alpha->word, "TIME", 8);
+	alpha->len = strlen(alpha->word);
 }
 
-// Aimingの終了処理
-void Aiming_Finalize()
+// Aiming2Dの終了処理
+void Aiming2D::Finalize()
 {
-	aiming.prepare = false;
-}
-
-// Aimingの更新
-void Aiming_Update()
-{
-	// Aimingの操作
-	aiming.pos.x += GetMouseX() * 0.05f;
-	aiming.pos.y -= GetMouseY() * 0.05f;
-
-	// 構え（矢の生成）
-	// 構え状態ではない、矢が飛行中ではない、ズーム前進ではない、ズーム後退ではない場合のみ、構え状態になれる
-	if (GetKeyboardTrigger(DIK_LSHIFT) && !aiming.prepare && !Cube::bFlying && !camera->bZoom_Forward && !camera->bZoom_Back)
+	if (timer != NULL)
 	{
-		Add_Cube(); // 矢の生成
-		aiming.prepare = true;
-		aiming.time_cnt = new Timer; // カウントダウンタイマーインスタンスの生成
-		aiming.time_cnt->SystemTimer_Start(); // タイムスタート
+		delete timer;
+		timer = NULL;
 	}
+}
 
+// Aiming2Dの更新
+void Aiming2D::Update()
+{	
+	switch (state)
+	{
+	case AIMING_STATE_FREE:
+		Free();
+		break;
+	case AIMING_STATE_PREPARE:
+		Prepare();
+		break;
+	case AIMING_STATE_ZOOM_FORWARD:
+		Zoom_Forward(zoomStart);
+		break;
+	case AIMING_STATE_ZOOM_BACKWARD:
+		Zoom_Backward(zoomStart);
+		break;
+	case AIMING_STATE_CHECK_ARROW:
+		Zoom_Forward(zoomStart);
+		break;
+	default:
+		break;
+	}
+}
+
+// Aiming2Dの描画
+void Aiming2D::Draw()
+{
 	// 構え状態中
-	if (aiming.prepare)
+	if (state == AIMING_STATE_PREPARE || state == AIMING_STATE_ZOOM_FORWARD)
 	{
-		// Cameraズーム前進（照準用）
-		//if (camera->zoom_cnt < ZOOM_MAX)
-		{
-			camera->Camera_Zoom_Forward();
-		}
-		
-		// カウントダウンを更新
-		timeCnt = TIME_COUNT_MAX - aiming.time_cnt->SystemTimer_GetTime();
+		LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 
-		// 時間制限を超えた
-		if (timeCnt < 0.0f)
-		{
-			Cube *cube = Get_Cube(); // Cube情報の取得
-			for (int i = 0; i < CUBE_MAX; i++)
-			{
-				// 使用中で、発射されていない、時間制限で発射されていないではない矢
-				if (cube[i].bUse && !cube[i].bShotted && !cube[i].nShotted)
-				{
-					// 時間制限で未発射だから、フラグをtrueに
-					cube[i].nShotted = true;
-					break;
-				}
-			}
-			aiming.charge_span = 0;
-			aiming.prepare = false; // 構え解除
-			camera->bZoom_Back = true; // Cameraズーム後退フラグ
-			delete aiming.time_cnt; // カウントダウンタイマーインスタンスの削除
-			aiming.time_cnt = NULL;
-			return;
-		}
+		Sprite_SetColor_2D(color); // 色のセット
 
-		// ズームが終わるまでチャージはできない（チャージはできないから、発射もできない）
-		if (camera->zoom_cnt >= ZOOM_MAX)
-		{
-			// 弓を引く（チャージ）
-			if (GetKeyboardPress(DIK_Z))
-			{	// SPACEを押している間チャージする
-				if (aiming.charge_span < CHARGE_SPAN)
-				{
-					aiming.charge_span++;
-				}
-			}
-			else
-			{
-				if (aiming.charge_span > 0)
-				{
-					aiming.charge_span--;
-				}
-			}
-		}
-
-		// 発射
-		if (GetKeyboardTrigger(DIK_X) && aiming.charge_span > 0)
-		{
-			Cube *cube = Get_Cube();
-			for (int i = 0; i < CUBE_MAX; i++)
-			{
-				// 使用中で、発射されていない、時間制限で発射されていないではない矢を発射
-				if (cube[i].bUse && !cube[i].bShotted && !cube[i].nShotted)
-				{
-					cube[i].bShotted = true; // 発射されたことにする
-					//cube[i].charge = aiming.charge_span;
-				}
-			}
-			aiming.charge_span = 0;
-			aiming.prepare = false; // 構え解除
-			delete aiming.time_cnt; // カウントダウンタイマーインスタンスの削除
-			aiming.time_cnt = NULL;
-		}
+		Sprite_Draw_2D(texture_index, pos.x, pos.y, tx, ty, tw, th);
 	}
-	// 構え状態ではない
-	else
-	{
-		// Cameraズーム前進
-		camera->Camera_Zoom_Forward(TARGET_Z * TARGET_MAG_Z, ZOOM_INCREASING * 2);
-		// Cameraズーム後退
-		camera->Camera_Zoom_Back();
-	}
+	DebugFont_Draw(2, 92, "posHit  x: %.2lf  y: %.2lf  z: %.2lf", posHit.x, posHit.y, posHit.z);
+	DebugFont_Draw(2, 152, "timeCnt  x: %.2lf", timeCnt);
+	Draw_Timer();
 }
 
-// Aimingの描画
-void Aiming_Draw()
+// Timerの表示
+void Aiming2D::Draw_Timer()
 {
-	aiming.Draw_Aiming();
-
 	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 
-	// ブレンド設定
-	pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);			// αブレンドを行う
-	pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);		// αソースカラーの指定
-	pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);	// αデスティネーションカラーの指定
-	// サンプラーステートパラメータの設定
-	pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);// テクスチャアドレッシング方法(U値)を設定
-	pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);// テクスチャアドレッシング方法(V値)を設定
-	pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);	// テクスチャ縮小フィルタモードを設定
-	pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);	// テクスチャ拡大フィルタモードを設定
-
-	Sprite_SetColor_2D(time.color); // 色のセット
+	Sprite_SetColor_2D(num->color); // 色のセット
 
 	// タイマー時間表示
 	// カウントダウンタイマーがある場合
-	if (aiming.time_cnt != NULL)
+	if (timer != NULL)
 	{
 		for (int i = 0; i < TIME_DIGIT_MAX - 1; i++)
 		{
+			int tmp;
 			// 小数点以降2桁から始まる（iが0の時、カウントダウンを10の-2乗で割ったら、100倍になる）
-			time.n_tmp = (int)(timeCnt / pow((double)10, (double)i - 2));
-			time.n_tmp = time.n_tmp % 10; // 1の位の値を取り出す
+			tmp = (int)(timeCnt / pow((double)10, (double)i - 2));
+			tmp = tmp % 10; // 1の位の値を取り出す
 
 			// 取り出した値を表示
 			// 小数点以降2桁を表示出来たら、1マスあけて、小数点以前の2桁を表示する
-			Sprite_Draw_2D(time.TextureIndex,
-				SCREEN_WIDTH - time.pos.x * (i < TIME_DIGIT_MAX / 2 ? i : i + 1) * 2 - time.pos.x, time.pos.y * 4,
-				time.tx + time.n_tmp * time.tw, time.ty,
-				time.tw, time.th);
+			Sprite_Draw_2D(num->texture_index,
+				SCREEN_WIDTH - num->pos.x * (i < TIME_DIGIT_MAX / 2 ? i : i + 1) * 2 - num->pos.x, num->pos.y * 4,
+				num->tx + tmp * num->tw, num->ty,
+				num->tw, num->th);
 		}
 	}
 	// カウントダウンタイマーがない場合
@@ -171,67 +129,273 @@ void Aiming_Draw()
 		for (int i = 0; i < TIME_DIGIT_MAX - 1; i++)
 		{
 			// 全部0で表示
-			Sprite_Draw_2D(time.TextureIndex,
-				SCREEN_WIDTH - time.pos.x * (i < TIME_DIGIT_MAX / 2 ? i : i + 1) * 2 - time.pos.x, time.pos.y * 4,
-				time.tx, time.ty,
-				time.tw, time.th);
+			Sprite_Draw_2D(num->texture_index,
+				SCREEN_WIDTH - num->pos.x * (i < TIME_DIGIT_MAX / 2 ? i : i + 1) * 2 - num->pos.x, num->pos.y * 4,
+				num->tx, num->ty,
+				num->tw, num->th);
 		}
 	}
 
-	Sprite_SetColor_2D(alphabet.color); // 色のセット
+	Sprite_SetColor_2D(alpha->color); // 色のセット
 
 	// アルファベットの表示
-	for (int i = 0; i < alphabet.len; i++)
+	for (int i = 0; i < alpha->len; i++)
 	{
-		Sprite_Draw_2D(alphabet.TextureIndex,
-			SCREEN_WIDTH - time.pos.x * DIGIT_MAX * 2 - alphabet.pos.x * (alphabet.len - i) * 2, alphabet.pos.y * 4,
-			alphabet.tx + ((alphabet.ta[i] - 65) % 13) * alphabet.tw, alphabet.ty + (alphabet.ta[i] - 65) / 13 * alphabet.th,
-			alphabet.tw, alphabet.th);
+		Sprite_Draw_2D(alpha->texture_index,
+			SCREEN_WIDTH - num->pos.x * DIGIT_MAX * 2 - alpha->pos.x * (alpha->len - i) * 2, alpha->pos.y * 4,
+			alpha->tx + ((alpha->word[i] - 65) % 13) * alpha->tw, alpha->ty + (alpha->word[i] - 65) / 13 * alpha->th,
+			alpha->tw, alpha->th);
 	}
-	DebugFont_Draw(2, 92, "Aiming  x: %.2lf  y: %.2lf  z: %.2lf", aiming.pos.x, aiming.pos.y, aiming.pos.z);
-	DebugFont_Draw(640, 32, "AimingTime: %.02lf", timeCnt);
 }
 
-// Aiming情報の取得
-Aiming* Get_Aiming()
+// フリー状態
+void Aiming2D::Free()
 {
-	return &aiming;
+	if (GetKeyboardTrigger(DIK_LSHIFT) && ArrowManager::cnt < ARROW_MAX)
+	{
+		ArrowManager::Add_Arrow();
+		state = AIMING_STATE_ZOOM_FORWARD;
+		zoomStart = Get_Game_CameraFP()->posEye.z;
+	}
 }
 
-// Aimingの頂点情報取得（コンストラクタ）
-Aiming::Aiming()
+// 構え状態
+void Aiming2D::Prepare()
 {
-	aimingv = new VERTEX_3D;
-	time_cnt = NULL;
+	// Aiming2Dからの射線が当たった座標の取得
+	// 必要の情報の取得
+	CameraFP *cameraFP = Get_Game_CameraFP();
+	Target *target = Get_Game_Target();
+
+	// Cameraから出される射線が当たった座標の取得
+	posHit = RayHit(
+		D3DXVECTOR3(cameraFP->posEye.x, cameraFP->posEye.y, target->pos.z), // 水平状態の時、射線のが当たった座標
+		D3DXVECTOR2(cameraFP->rotEye.x, cameraFP->rotEye.y), // 射線の回転
+		target->pos.z - cameraFP->posEye.z); // 水平状態の時、CameraからTargetへの距離
+
+	if (timer == NULL)
+	{
+		timer = new Timer; // カウントダウンタイマーインスタンスの生成
+		timer->SystemTimer_Initialize();
+		timer->SystemTimer_Start(); // タイムスタート
+	}
+
+	// カウントダウンを更新
+	timeCnt = TIME_COUNT_MAX - timer->SystemTimer_GetTime();
+	
+	// 時間制限を超えた
+	if (timeCnt < 0.0f)
+	{
+		Arrow *arrows = ArrowManager::arrows;
+		for (int i = 0; i < ArrowManager::num; i++)
+		{
+			// 発射準備中
+			if (arrows[i].state == ARROW_STATE_PREPARE)
+			{
+				// 非表示にする
+				arrows[i].state = ARROW_STATE_NONE;
+				arrows[i].Display = false;
+				break;
+			}
+		}
+		//aiming.charge_span = 0;
+		state = AIMING_STATE_FREE;
+		delete timer; // カウントダウンタイマーインスタンスの削除
+		timer = NULL;
+		return;
+	}
+	// 時間制限内
+	else
+	{
+		if (GetKeyboardPress(DIK_Z))
+		{
+			state = AIMING_STATE_NONE;
+
+			Arrow *arrows = ArrowManager::arrows;
+			for (int i = 0; i < ArrowManager::num; i++)
+			{
+				// 発射準備中
+				if (arrows[i].state == ARROW_STATE_PREPARE)
+				{
+					// 非表示にする
+					arrows[i].state = ARROW_STATE_FLYING;
+					break;
+				}
+			}
+			delete timer;
+			timer = NULL;
+		}
+	}
+}
+
+// 前進Zoom待ち
+void Aiming2D::Zoom_Forward(float start, float zm, float zi)
+{
+	CameraFP *cameraFP = Get_Game_CameraFP();
+	
+	cameraFP->bZoom = true;
+
+	if (cameraFP->rotEye.x != cameraFP->rotEye_init.x || cameraFP->rotEye.y != cameraFP->rotEye_init.y)
+	{
+		cameraFP->Set_Rot_Reset_Value();
+		cameraFP->Rot_Reset();
+	}
+	else
+	{
+		// Camera回転のリセットが終わったら、リセット値セットフラグをオフに
+		cameraFP->bSetValue = false;
+
+		if (cameraFP->posEye.z < start + zm)
+		{
+			cameraFP->Zoom_Foward(zi);
+		}
+		else
+		{
+			if (state == AIMING_STATE_ZOOM_FORWARD)
+			{
+				// ズームが終わったら、Zoomフラグをオフに
+				cameraFP->bZoom = false;
+				state = AIMING_STATE_PREPARE;
+
+				Arrow *arrows = ArrowManager::arrows;
+				for (int i = 0; i < ArrowManager::num; i++)
+				{
+					if (arrows[i].state == ARROW_STATE_WAIT_ZOOM)
+					{
+						arrows[i].state = ARROW_STATE_PREPARE;
+						arrows[i].Display = true;
+					}
+				}
+			}
+			else if (state == AIMING_STATE_CHECK_ARROW && GetKeyboardTrigger(DIK_C))
+			{
+				state = AIMING_STATE_ZOOM_BACKWARD;
+				zoomStart = cameraFP->posEye.z;
+			}
+		}
+	}
+}
+
+// 後退Zoom待ち
+void Aiming2D::Zoom_Backward(float start, float zm, float zi)
+{
+	CameraFP *cameraFP = Get_Game_CameraFP();
+
+	cameraFP->bZoom = true;
+
+	if (cameraFP->rotEye.x != cameraFP->rotEye_init.x || cameraFP->rotEye.y != cameraFP->rotEye_init.y)
+	{
+		cameraFP->Set_Rot_Reset_Value();
+		cameraFP->Rot_Reset();
+	}
+	else
+	{
+		// Camera回転のリセットが終わったら、リセット値セットフラグをオフに
+		cameraFP->bSetValue = false;
+
+		if (cameraFP->posEye.z > start - zm * 2)
+		{
+			cameraFP->Zoom_Backward(zi);
+		}
+		else
+		{
+			// ズームが終わったら、Zoomフラグをオフに
+			cameraFP->bZoom = false;
+			state = AIMING_STATE_FREE;
+		}
+	}
+}
+
+// Aiming3D
+// Aiming3Dの初期化（コンストラクタ）
+Aiming3D::Aiming3D()
+{
+	face = new Face;
+}
+
+// Aiming3Dの終了処理（デストラクタ）
+Aiming3D::~Aiming3D()
+{
+	delete face;
+}
+
+// Aiming3Dの初期化
+void Aiming3D::Initialize()
+{
+	texture_index = TEXTURE_INDEX_AIMING;
+	pos = Pos_With_Camera();
+	rot = D3DXVECTOR3(-90.0f, 0.0f, 0.0f);
+	face->CreateFace(D3DXVECTOR3(0.1f, 0.0f, 0.1f));
 	prepare = false;
 }
 
-// Aimingの頂点情報のリリース（デストラクタ）
-Aiming::~Aiming()
+// Aiming3Dの終了処理
+void Aiming3D::Finalize()
 {
-	delete aimingv;
+
 }
 
-// Aimingの描画
-void Aiming::Draw_Aiming()
+// Aiming3Dの更新
+void Aiming3D::Update()
 {
-	aimingv->Sprite_Draw_Face(texture_index, pos, rot, scl, revolution, revRadius, revSpd);
+	// Aiming3Dからの射線が当たった座標の取得
+	// 必要の情報の取得
+	CameraFP *cameraFP = Get_Game_CameraFP();
+	Target *target = Get_Game_Target();
+
+	// CameraによるAimingの位置更新
+	pos = Pos_With_Camera();
+
+	// Cameraから出される射線が当たった座標の取得
+	posHit = RayHit(
+		D3DXVECTOR3(cameraFP->posEye.x, cameraFP->posEye.y, target->pos.z), // 水平状態の時、射線のが当たった座標
+		D3DXVECTOR2(cameraFP->rotEye.x, cameraFP->rotEye.y), // 射線の回転
+		target->pos.z - cameraFP->posEye.z); // 水平状態の時、CameraからTargetへの距離
+
+	// 構え状態
+	if (GetKeyboardTrigger(DIK_LSHIFT) && !prepare && ArrowManager::cnt < 5)
+	{
+		ArrowManager::Add_Arrow();
+		prepare = true;
+		
+	}
 }
 
-// Aimingのセット
-void Aiming::Set_Aiming(TextureIndex textureindex, D3DXVECTOR3 p, D3DXVECTOR3 r, D3DXVECTOR3 s, bool Revolution, D3DXVECTOR3 RevRadius, D3DXVECTOR3 RevSpd)
+// Aiming3Dの描画
+void Aiming3D::Draw()
 {
-	texture_index = textureindex;
-	pos = p;
-	rot = r;
-	scl = s;
-	revolution = Revolution;
-	revRadius = RevRadius;
-	revSpd = RevSpd;
+	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
+
+	D3DXMATRIX mtxScl; // スケーリング行列
+	D3DXMATRIX mtxRot; // 回転行列
+	D3DXMATRIX mtxTrs; // 平行移動行列
+
+	D3DXMatrixIdentity(&mtxWorld); // ワールド行列を単位行列に初期化
+
+	// スケール行列を作成＆ワールド行列へ合成
+	D3DXMatrixScaling(&mtxScl, 1, 1, 1);
+	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxScl); // World * Scaling
+
+	// 回転行列を作成＆ワールド行列へ合成
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, D3DXToRadian(rot.y + rot_Camera.y), D3DXToRadian(rot.x + rot_Camera.x), D3DXToRadian(rot.z));
+	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot); // World * Rotation
+
+	// 平行移動行列を作成＆ワールド行列へ合成
+	D3DXMatrixTranslation(&mtxTrs, pos.x, pos.y, pos.z);
+	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxTrs); // World * Translation
+
+	// ワールドマトリックスを設定
+	pDevice->SetTransform(D3DTS_WORLD, &mtxWorld);
+
+	face->Draw(texture_index);
+
+	DebugFont_Draw(2, 92, "posHit  x: %.2lf  y: %.2lf  z: %.2lf", posHit.x, posHit.y, posHit.z);
 }
 
-// Aimingの回転の補正
-float Aiming::Rotation_Correction(float r)
+// Cameraによる位置
+D3DXVECTOR3 Aiming3D::Pos_With_Camera()
 {
-	return aimingv->Rotation_Correction(r);
+	rot_Camera = Get_Game_CameraFP()->rotEye;
+	rot_Camera.x *= -1;
+	return Get_PointXYZ_OnLine(Get_Game_CameraFP()->posEye, rot_Camera, 2.0f);
 }

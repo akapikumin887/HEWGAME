@@ -1,3 +1,4 @@
+#pragma once
 #include <windows.h>
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -17,12 +18,11 @@
 class Wind
 {
 public:
-	D3DXVECTOR3 speed; // Windの速度
-};
+	static D3DXVECTOR3 speed; // Windの速度
 
-void Wind_Initialize(); // Windの初期化
-void Wind_Finalize(); // Windの終了処理
-void Wind_Update(); // Windの更新
-void Wind_Draw(); // Windの描画
-Wind* Get_Wind(); // Wind情報の取得
+	static void Initialize(); // Windの初期化
+	static void Finalize(); // Windの終了処理
+	static void Update(); // Windの更新
+	static void Draw(); // Windの描画
+};
 #endif

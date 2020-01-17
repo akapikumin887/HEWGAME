@@ -1,3 +1,4 @@
+#pragma once
 #ifndef COMMON_H_
 #define COMMON_H_
 
@@ -6,13 +7,14 @@
 #define PLAYER_SIZE_COEFFICIENT 2.5f
 #define FPS_STANTARD 60.0f
 
-typedef enum {
+enum SCENE {
 	SCENE_NONE,
 	SCENE_TITLE,
+	SCENE_MODE,
 	SCENE_GAME,
 	SCENE_RESULT,
 	SCENE_RANKING,
-}SCENE;
+};
 
 void SetScene(SCENE s);
 SCENE GetScene();
