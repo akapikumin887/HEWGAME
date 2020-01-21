@@ -10,9 +10,6 @@
 #include "sprite.h"
 #include "texture.h"
 
-#ifndef WIND_H_
-#define WIND_H_
-
 #define WIND_FORCE_MAG (FPS_STANTARD * 3)
 
 class Wind
@@ -25,4 +22,3 @@ public:
 	static void Update(); // Wind‚ÌXV
 	static void Draw(); // Wind‚Ì•`‰æ
 };
-#endif

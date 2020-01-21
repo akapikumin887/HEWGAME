@@ -9,9 +9,6 @@
 #include "mydirect3d.h"
 #include "texture.h"
 
-#ifndef _SPRITE_H_
-#define _SPRITE_H_
-
 // 2Dポリゴン頂点フォーマット構造体を定義
 class Vertex_2D
 {
@@ -81,7 +78,7 @@ void Sprite_Initialize_2D();
 void Sprite_Finalize_2D();
 void Sprite_SetColor_2D(D3DCOLOR color);//頂点色のセット
 void Sprite_Draw_2D(TextureIndex texture_index,float dx, float dy, int tx, int ty,int tw, int th); // dxは表示座標txは左上テクスチャ座標twテクスチャ貼り付けサイズ
-void Sprite_Draw_Matrix_2D(TextureIndex texture_index, D3DXVECTOR2 s, D3DXVECTOR2 p, int tx, int ty, int tw, int th, float d = 0.0f); // マトリックスを使った描画
+void Sprite_Draw_Matrix_2D(TextureIndex texture_index, D3DXVECTOR2 s, D3DXVECTOR2 p, int tx, int ty, int tw, int th, float r = 0.0f); // マトリックスを使った描画
 void Sprite_DrawEx_2D(TextureIndex texture_index, float dx, float dy, float tx, float ty, float tw, float th); // dxは表示座標txは左上テクスチャ座標twテクスチャ貼り付けサイズ
 
 D3DXMATRIX Set_Mtx_Scl(D3DXMATRIX mtx, D3DXVECTOR3 s = D3DXVECTOR3(1.0f, 1.0f, 1.0f)); // スケール行列の設定(ワールド行列の初期化を含む)
@@ -91,4 +88,3 @@ D3DXMATRIX Set_Mtx_Trs(D3DXMATRIX mtx, D3DXVECTOR3 p); // 平行移動行列の設定
 D3DXVECTOR3 CreateBillboard(D3DXVECTOR3 sz, LPDIRECT3DVERTEXBUFFER9 &vb, LPDIRECT3DINDEXBUFFER9 &ib); // Billboard（バッファ）の生成
 D3DXMATRIX Set_Biillboard_Camera(D3DXMATRIX mtx); // Billboardの描画時のCamera回転のセット
 void Draw_Billboard(TextureIndex tex_idx, D3DXVECTOR3 p, D3DXMATRIX &mtxW, D3DXMATRIX mtxR, LPDIRECT3DVERTEXBUFFER9 vb, LPDIRECT3DINDEXBUFFER9 ib); // Billboardの描画
-#endif 

@@ -6,9 +6,9 @@
 
 float Arrow::speed = ARROW_MOVE_SPEED;
 Arrow* ArrowManager::arrows;
-Score* ArrowManager::score;
 int ArrowManager::num;
-int ArrowManager::cnt = 0;
+int ArrowManager::cnt;
+int ArrowManager::score_t;
 
 // ArrowXModel
 // ArrowXModelの初期化（コンストラクタ）
@@ -111,7 +111,9 @@ void Arrow::Update()
 		Movement();
 		HitCheck();
 		break;
-	case ARROW_STATE_HIT:
+	case ARROW_STATE_HIT_TARGET:
+		break;
+	case ARROW_STATE_HIT_PLANE:
 		break;
 	case ARROW_STATE_OVER_FLYING:
 		Movement();
@@ -182,7 +184,23 @@ void Arrow::HitCheck()
 	// Arrowの先頭位置の更新
 	posHead = Get_PointXYZ_OnLine(pos, rot, ARROW_SIZE_Z / 2);
 
-	// 先頭位置が的を超えた場合
+	// 先頭位置がPlaneを超えた場合
+	if (posHead.y < Get_Game_Plane()->pos.y)
+	{
+		// 構え状態の解除
+		Aiming2D *aiming = Get_Game_Aiming();
+		CameraFP *cameraFP = Get_Game_CameraFP();
+
+		aiming->zoomStart = cameraFP->posEye.z;
+		aiming->state = AIMING_STATE_CHECK_ARROW;
+
+		Target *target = Get_Game_Target();
+		targetLen = Get_Length(posHead, target->pos);
+		state = ARROW_STATE_HIT_PLANE;
+		return;
+	}
+
+	// 先頭位置がTargetを超えた場合
 	if (posHead.z > posAiming.z)
 	{
 		// Arrowの位置と刺し位置との距離
@@ -215,7 +233,7 @@ void Arrow::HitCheck()
 			// 先頭位置と刺し位置の差分だけ、Arrowの位置を調整
 			pos -= (posHead - posHit);
 
-			state = ARROW_STATE_HIT;
+			state = ARROW_STATE_HIT_TARGET;
 		}
 	}
 }
@@ -288,8 +306,7 @@ void ArrowManager::Initialize(int n)
 
 	cnt = 0;
 
-	score = new Score;
-	score->Initialize();
+	score_t = 0;
 }
 
 // 全てのArrowの終了処理
@@ -300,8 +317,6 @@ void ArrowManager::Finalize()
 		delete[] arrows;
 		arrows = NULL;
 	}
-
-	delete score;
 }
 
 // 全てのArrowの更新
@@ -318,14 +333,12 @@ void ArrowManager::Update()
 		Arrow::speed += 1.0f;
 	}
 
+	ArrowManager::score_t = 0;
+	
 	for (int i = 0; i < num; i++)
 	{
 		arrows[i].Update();
-		if (ArrowManager::score->s[i] != arrows[i].score)
-		{
-			ArrowManager::score->s[i] = arrows[i].score;
-			ArrowManager::score->Add_Score(score->s[i]);
-		}
+		ArrowManager::score_t += arrows[i].score;
 	}
 }
 
@@ -344,7 +357,7 @@ void ArrowManager::Draw()
 		DebugFont_Draw(640, 182, "posHit  x: %.2lf  y: %.2lf  z: %.2lf", arrows[0].posHit.x, arrows[0].posHit.y, arrows[0].posHit.z);
 		DebugFont_Draw(640, 212, "posAiming  x: %.2lf  y: %.2lf  z: %.2lf", arrows[0].posAiming.x, arrows[0].posAiming.y, arrows[0].posAiming.z);
 	}
-	score->Draw();
+
 	DebugFont_Draw(2, 122, "矢の残数: %d", num - cnt);
 	DebugFont_Draw(2, 182, "wind: %.01lf", Wind::speed.x * WIND_FORCE_MAG);
 	DebugFont_Draw(2, 212, "speed: %.01lf", Arrow::speed);
@@ -360,8 +373,7 @@ void ArrowManager::Add_Arrow()
 			Wind::Initialize();
 			arrows[i].bUse = true;
 			arrows[i].state = ARROW_STATE_WAIT_ZOOM;
-			//arrows[i].state = ARROW_STATE_PREPARE;
-			
+			//arrows[i].state = ARROW_STATE_PREPARE;			
 			cnt++;
 			break;
 		}

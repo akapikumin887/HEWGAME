@@ -11,9 +11,6 @@
 #include "sprite.h"
 #include "texture.h"
 
-#ifndef XMODEL_H_
-#define XMODEL_H_
-
 class XModel
 {
 public:
@@ -29,4 +26,3 @@ public:
 	void XModel_Update();                         // XModel‚ÌXV
 	void XModel_Draw();                           // XModel‚Ì•`‰æ
 };
-#endif

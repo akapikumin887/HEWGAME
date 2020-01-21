@@ -1,7 +1,6 @@
 #pragma once
-#ifndef SYSTEM_TIMER_H_
-#define SYSTEM_TIMER_H_
 
+// SYSTEM_TIMER_H_
 class Timer
 {
 public:
@@ -29,4 +28,3 @@ public:
 // 関数のプロトタイプ宣言
 //====================================================
 void LimitThreadAffinityToCurrentProc(void); // 現在のスレッドを1つのプロセッサ（現在のスレッド）に制限
-#endif // SYSTEM_TIMER_H_

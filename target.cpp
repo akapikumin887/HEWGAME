@@ -1,5 +1,4 @@
 #include "target.h"
-#include "tool_functions.h"
 
 // Targetの初期化（コンストラクタ）
 Target::Target()

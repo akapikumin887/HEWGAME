@@ -10,11 +10,7 @@
 #include "sprite.h"
 #include "texture.h"
 
-#ifndef LIGHT_H_
-#define LIGHT_H_
-
 void Light_Initialize(); // Light‚Ì‰Šú‰»
 void Light_Finalize(); // Light‚ÌI—¹ˆ—
 void Light_Update(); // Light‚ÌXV
 void Light_Draw(); // Light‚Ì•`‰æ
-#endif

@@ -1,0 +1,31 @@
+﻿  aiming.cpp
+  arrow.cpp
+  camera.cpp
+  debug_font.cpp
+  fade.cpp
+  game.cpp
+  gravility.cpp
+  HitCheck.cpp
+  input.cpp
+  light.cpp
+  main.cpp
+  mode.cpp
+  mydirect3d.cpp
+  plane.cpp
+  score.cpp
+  sprite.cpp
+  system_timer.cpp
+  target.cpp
+  texture.cpp
+  title.cpp
+  コンパイル中...
+  tool_functions.cpp
+  ui.cpp
+  wind.cpp
+  xmodel.cpp
+  コード生成しています。
+  216 of 217 functions (99.5%) were compiled, the rest were copied from previous compilation.
+    20 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  コード生成が終了しました。
+  BASE.vcxproj -> D:\HAL\BASEDX\Release\BASE.exe

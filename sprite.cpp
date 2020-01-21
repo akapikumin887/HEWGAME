@@ -19,8 +19,6 @@ static LPDIRECT3DINDEXBUFFER9 g_pIndexBuffer = NULL;
 
 static D3DXMATRIX g_mtxGWorld;
 
-static Camera *cameraFP;
-
 //====================================================
 // 初期化
 //====================================================
@@ -135,7 +133,7 @@ void Sprite_Draw_2D(TextureIndex texture_index,float dx, float dy, int tx,int ty
 		0, 2); // 2がポリゴンの数
 }
 
-void Sprite_Draw_Matrix_2D(TextureIndex texture_index, D3DXVECTOR2 s, D3DXVECTOR2 p, int tx, int ty, int tw, int th, float d)
+void Sprite_Draw_Matrix_2D(TextureIndex texture_index, D3DXVECTOR2 s, D3DXVECTOR2 p, int tx, int ty, int tw, int th, float r)
 {
 	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 
@@ -155,7 +153,7 @@ void Sprite_Draw_Matrix_2D(TextureIndex texture_index, D3DXVECTOR2 s, D3DXVECTOR
 	D3DXMatrixIdentity(&mtxWorld); // ワールド行列を単位行列に初期化
 
 	// 回転行列を作成＆ワールド行列へ合成
-	D3DXMatrixRotationYawPitchRoll(&mtxRot, 0.0f, 0.0f, D3DXToRadian(d));
+	D3DXMatrixRotationYawPitchRoll(&mtxRot, 0.0f, 0.0f, D3DXToRadian(r));
 	D3DXMatrixMultiply(&mtxWorld, &mtxWorld, &mtxRot); // World * Rotation
 
 	// 平行移動行列を作成＆ワールド行列へ合成

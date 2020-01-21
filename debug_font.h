@@ -1,7 +1,4 @@
 #pragma once
-#ifndef DEBUG_FONT_H_
-#define DEBUG_FONT_H_
-
 //====================================================
 // 関数のプロトタイプ宣言
 //====================================================
@@ -18,4 +15,3 @@ void DebugFont_Finalize(void);
 //      y       ... 描画座標y
 //      pFormat ... printfの引数とほぼ同じ仕様
 void DebugFont_Draw(int x, int y, const char* pFormat, ...);
-#endif // DEBUG_FONT_H_

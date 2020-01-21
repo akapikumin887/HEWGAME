@@ -1,16 +1,8 @@
 #include "camera.h"
-#include "debug_font.h"
 #include "input.h"
 #include "tool_functions.h"
-#include "game.h"
 
 // メンバー関数の定義
-// Cameraの初期化（コンストラクタ）
-Camera::Camera()
-{
-	
-}
-
 // Cameraの描画
 void Camera::Draw()
 {
@@ -34,29 +26,6 @@ void Camera::Draw()
 
 	// プロジェクション行列の設定
 	pDevice->SetTransform(D3DTS_PROJECTION, &mtxProjection);
-
-	//DebugFont_Draw(2, 2, "CameraAtRot  x: %.2lf  y: %.2lf  z: %.2lf", rotAt.x, rotAt.y, rotAt.z);
-	DebugFont_Draw(2, 2, "CameraEye  x: %.2lf  y: %.2lf  z: %.2lf", posEye.x, posEye.y, posEye.z);
-	DebugFont_Draw(2, 32, "CameraAt  x: %.2lf  y: %.2lf  z: %.2lf", posAt.x, posAt.y, posAt.z);
-	DebugFont_Draw(2, 62, "CameraEyeRot  x: %.2lf  y: %.2lf  z: %.2lf", rotEye.x, rotEye.y, rotEye.z);
-}
-
-// Camera回転のリセット値のセット
-void Camera::Set_Rot_Reset_Value()
-{
-	if (!bSetValue)
-	{
-		rot_reset_x = (rotEye.x - rotEye_init.x) / ROT_RESET_FRAME;
-		rot_reset_y = (rotEye.y - rotEye_init.y) / ROT_RESET_FRAME;
-		bSetValue = true;
-	}
-}
-
-// Camera回転のリセット
-void Camera::Rot_Reset()
-{
-	rotEye.x = Angle_To_Target(rotEye.x, rot_reset_x, rotEye_init.x);
-	rotEye.y = Angle_To_Target(rotEye.y, rot_reset_y, rotEye_init.y);
 }
 
 // Cameraのズーム前進
@@ -73,23 +42,28 @@ void Camera::Zoom_Backward(float zi)
 
 // ファーストパーソンCamera
 // Cameraの初期化
-void CameraFP::Initialize()
+void CameraFP::Initialize(D3DXVECTOR3 peye, D3DXVECTOR3 pat)
 {
-	posEye = D3DXVECTOR3(CAMERAEYE_X, CAMERAEYE_Y, CAMERAEYE_Z);
-	posAt = D3DXVECTOR3(CAMERAAT_X, CAMERAAT_Y, CAMERAAT_Z);
+	posEye = posEyeDef = D3DXVECTOR3(CAMERAEYE_X, CAMERAEYE_Y, CAMERAEYE_Z);
+	posAt = posAtDef = D3DXVECTOR3(CAMERAAT_X, CAMERAAT_Y, CAMERAAT_Z);
+	vecUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	direction = posAt - posEye; // Cameraの向きの計算
 	D3DXVec3Normalize(&direction, &direction); // Cameraの向きの正規化
-	rotEye_init = rotEye = D3DXVECTOR3(D3DXToDegree(atan2f(direction.y, direction.z)), D3DXToDegree(atan2f(direction.x, direction.z)), 0.0f); // 向きによるCameraの回転
-	vecUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	lenEyeToAt = EYETOATLEN;
 	bZoom = false;
+	rotEyeDef = rotEye = D3DXVECTOR3(D3DXToDegree(atan2f(direction.y, direction.z)), D3DXToDegree(atan2f(direction.x, direction.z)), 0.0f); // 向きによるCameraの回転
 	bSetValue = false;
 }
 
 // Cameraの終了処理
 void CameraFP::Finalize()
 {
-	Initialize();
+	posEye = posEyeDef;
+	posAt = posAtDef;
+	lenEyeToAt = EYETOATLEN;
+	bZoom = false;
+	rotEye = rotEyeDef;
+	bSetValue = false;
 }
 
 // Cameraの更新
@@ -116,7 +90,7 @@ void CameraFP::Camera_Reset()
 {
 	if (GetKeyboardTrigger(DIK_RETURN))
 	{
-		Initialize();
+		Finalize();
 	}
 }
 
@@ -214,22 +188,46 @@ void CameraFP::CameraAt_Move()
 	posAt.z = posEye.z + lenEyeToAt * cosf(D3DXToRadian(rotEye.y)) * cosf(D3DXToRadian(rotEye.x));
 }
 
+// Camera回転のリセット値のセット
+void CameraFP::Set_Rot_Reset_Value()
+{
+	if (!bSetValue)
+	{
+		rot_reset_x = (rotEye.x - rotEyeDef.x) / ROT_RESET_FRAME;
+		rot_reset_y = (rotEye.y - rotEyeDef.y) / ROT_RESET_FRAME;
+		bSetValue = true;
+	}
+}
+
+// Camera回転のリセット
+void CameraFP::Rot_Reset()
+{
+	rotEye.x = Angle_To_Target(rotEye.x, rot_reset_x, rotEyeDef.x);
+	rotEye.y = Angle_To_Target(rotEye.y, rot_reset_y, rotEyeDef.y);
+}
+
 // サードパーソンCamera
 // Cameraの初期化
-void CameraTP::Initialize(D3DXVECTOR3 p)
+void CameraTP::Initialize(D3DXVECTOR3 p, D3DXVECTOR3 pc)
 {
-	posEye = D3DXVECTOR3(p.x, p.y + 5.0f, p.z - 50.0f);
-	posAt = D3DXVECTOR3(p.x, p.y, p.z);
-	direction = posAt - posEye; // Cameraの向きの計算
-	lenEyeToAt = EYETOATLEN;
-	rotAt = D3DXVECTOR3(D3DXToDegree(atan2f(direction.y, direction.z)), D3DXToDegree(atan2f(direction.x, direction.z)), 0.0f); // 向きによるCameraの回転
+	posEye = posEyeDef = D3DXVECTOR3(p.x + pc.x, p.y + pc.y, p.z + pc.z);
+	posAt = posAtDef = D3DXVECTOR3(p.x, p.y, p.z);
 	vecUp = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	direction = posAt - posEye; // Cameraの向きの計算
+	D3DXVec3Normalize(&direction, &direction); // Cameraの向きの正規化
+	lenEyeToAt = EYETOATLEN;
+	bZoom = false;
+	rotAt = rotAtDef = D3DXVECTOR3(D3DXToDegree(atan2f(direction.y, direction.z)), D3DXToDegree(atan2f(direction.x, direction.z)), 0.0f); // 向きによるCameraの回転
 }
 
 // Cameraの終了処理
-void CameraTP::Finalize(D3DXVECTOR3 p)
+void CameraTP::Finalize()
 {
-	Initialize(p);
+	posEye = posEyeDef;
+	posAt = posAtDef;
+	lenEyeToAt = EYETOATLEN;
+	bZoom = false;
+	rotAt = rotAtDef;
 }
 
 // Cameraの更新

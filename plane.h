@@ -10,9 +10,6 @@
 #include "sprite.h"
 #include "texture.h"
 
-#ifndef PLANE_H_
-#define PLANE_H_
-
 class Plane :public FaceEX
 {
 public:
@@ -30,4 +27,3 @@ public:
 	void Update();   // Plane‚ÌXV
 	void Draw();     // Plane‚Ì•`‰æ
 };
-#endif

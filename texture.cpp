@@ -30,6 +30,8 @@ static const TextureFile g_TextureFiles[] = {
 	{ "asset/texture/airou.png", 256, 256 },
 	{ "asset/texture/aiming.png", 128, 128 },
 	{ "asset/texture/target.png", 512, 512 },
+	{ "asset/texture/plane.jpg", 1080, 1920 },
+	{ "asset/texture/side.jpg", 1920, 1080 },
 	{ "asset/texture/number.png", 320, 32 },
 	{ "asset/texture/alphabet.png", 416, 64 }
 	// ヘッダーで定義したenumと対応しているので数が異なったり定義名があらわす画像ファイルの順番が異なったりしないようにする

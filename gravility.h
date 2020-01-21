@@ -10,9 +10,6 @@
 #include "sprite.h"
 #include "texture.h"
 
-#ifndef GRAVILITY_H_
-#define GRAVILITY_H_
-
 #define GRAVILITY -9.8f
 #define GRAVILITY_FORCE_MAG (FPS_STANTARD * 3)
 
@@ -26,4 +23,3 @@ public:
 	static void Update();     // GravilityÇÃçXêV
 	static void Draw();       // GravilityÇÃï`âÊ
 };
-#endif

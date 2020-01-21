@@ -13,17 +13,19 @@
 #include "camera.h"
 #include "ui.h"
 
-#ifndef AIMING_H_
-#define AIMING_H_
-
 #define TIME_COUNT_MAX 15.0f
+
+#define ZOOM_FORWARD 6.0f
+#define ZOOM_CHECK 20.0f
+#define ZOOM_INCREASING 0.25f
 
 enum AimingState {
 	AIMING_STATE_NONE,
 	AIMING_STATE_FREE,
 	AIMING_STATE_PREPARE,
 	AIMING_STATE_ZOOM_FORWARD,
-	AIMING_STATE_ZOOM_BACKWARD,
+	AIMING_STATE_ZOOM_BACKWARD_PREPARE,
+	AIMING_STATE_ZOOM_BACKWARD_SHOT,
 	AIMING_STATE_CHECK_ARROW,
 };
 
@@ -57,8 +59,8 @@ public:
 
 	void Free();          // フリー状態
 	void Prepare();       // 構え状態
-	void Zoom_Forward(float start, float zm = ZOOM_MAX, float zi = ZOOM_INCREASING);  // 前進Zoom待ち
-	void Zoom_Backward(float start, float zm = ZOOM_MAX, float zi = ZOOM_INCREASING); // 後退Zoom待ち
+	void Zoom_Forward(float start, float zm = ZOOM_FORWARD, float zi = ZOOM_INCREASING);  // 前進Zoom待ち
+	void Zoom_Backward(float start, float zm = ZOOM_FORWARD, float zi = ZOOM_INCREASING); // 後退Zoom待ち
 };
 
 class Aiming3D
@@ -85,4 +87,3 @@ public:
 
 	D3DXVECTOR3 Pos_With_Camera(); // Cameraによる位置
 };
-#endif

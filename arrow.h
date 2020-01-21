@@ -15,9 +15,6 @@
 #include "ui.h"
 #include "score.h"
 
-#ifndef ARROW_H_
-#define ARROW_H_
-
 #define ARROWXMODEL "asset/xmodel/sample.x"
 
 #define ARROW_SIZE_X 0.05f
@@ -25,8 +22,8 @@
 #define ARROW_SIZE_Z 5.0f
 
 #define ARROW_POS_X 0.0f
-#define ARROW_POS_Y 2.5f
-#define ARROW_POS_Z -5.0f
+#define ARROW_POS_Y 0.0f
+#define ARROW_POS_Z -20.0f
 #define ARROW_POS_Z_MAX 1000.0f
 
 #define ARROW_ROT_X 0.0f
@@ -41,7 +38,8 @@ enum ArrowState {
 	ARROW_STATE_WAIT_ZOOM,
 	ARROW_STATE_PREPARE,
 	ARROW_STATE_FLYING,
-	ARROW_STATE_HIT,
+	ARROW_STATE_HIT_TARGET,
+	ARROW_STATE_HIT_PLANE,
 	ARROW_STATE_OVER_FLYING,
 };
 
@@ -112,9 +110,9 @@ class ArrowManager
 {
 public:
 	static Arrow *arrows; // Arrowの配列
-	static Score *score;  // Score
 	static int   num;     // Arrowの数
 	static int   cnt;     // 矢の残数
+	static int   score_t; // Score
 
 	static void   Initialize(int n); // 全てのArrowの初期化
 	static void   Finalize();        // 全てのArrowの終了処理
@@ -123,4 +121,3 @@ public:
 	static void   Add_Arrow();       // Arrowの生成
 	static Arrow* Get_Arrow();       // Arrow情報の取得
 };
-#endif

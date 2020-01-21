@@ -2,8 +2,6 @@
 //====================================================
 // ※パッド対応はxinputの利用を推奨
 //====================================================
-#ifndef INPUT_H_
-#define INPUT_H_
 
 #include <Windows.h>
 // dinput.hをインクルードする前にこれを入れないと警告が出るので注意
@@ -65,4 +63,3 @@ long GetMouseZ(void);               // マウスホイールが動いた相対値
 //---------------------------- game pad
 BOOL IsButtonPressed(int padNo, DWORD button);
 BOOL IsButtonTriggered(int padNo, DWORD button);
-#endif

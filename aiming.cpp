@@ -40,9 +40,10 @@ void Aiming2D::Initialize()
 
 	state = AIMING_STATE_FREE;
 
+	// Numberの初期化
+	num->Initialize(TEXTURE_INDEX_NUMBER, D3DXVECTOR2(32.0f, 32.0f), D3DXVECTOR2(SCREEN_WIDTH - (TIME_DIGIT_MAX - 1) * 32.0f, 64.0f), 0, 0, 10, 1, TIME_DIGIT_MAX / 2, TIME_DIGIT_MAX / 2);
 	// Alphabetの初期化
-	strncpy(alpha->word, "TIME", 8);
-	alpha->len = strlen(alpha->word);
+	alpha->Initialize(TEXTURE_INDEX_ALPHABET, "TIME", D3DXVECTOR2(32.0f, 32.0f), D3DXVECTOR2(num->pos.x - num->digit_i * num->tw, 64.0f), 0, 0, 13, 2);
 }
 
 // Aiming2Dの終了処理
@@ -69,11 +70,14 @@ void Aiming2D::Update()
 	case AIMING_STATE_ZOOM_FORWARD:
 		Zoom_Forward(zoomStart);
 		break;
-	case AIMING_STATE_ZOOM_BACKWARD:
+	case AIMING_STATE_ZOOM_BACKWARD_PREPARE:
 		Zoom_Backward(zoomStart);
 		break;
+	case AIMING_STATE_ZOOM_BACKWARD_SHOT:
+		Zoom_Backward(zoomStart, ZOOM_FORWARD + ZOOM_CHECK, ZOOM_INCREASING * 2);
+		break;
 	case AIMING_STATE_CHECK_ARROW:
-		Zoom_Forward(zoomStart);
+		Zoom_Forward(zoomStart, ZOOM_CHECK, ZOOM_INCREASING * 2);
 		break;
 	default:
 		break;
@@ -102,50 +106,19 @@ void Aiming2D::Draw_Timer()
 {
 	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 
-	Sprite_SetColor_2D(num->color); // 色のセット
-
 	// タイマー時間表示
 	// カウントダウンタイマーがある場合
 	if (timer != NULL)
 	{
-		for (int i = 0; i < TIME_DIGIT_MAX - 1; i++)
-		{
-			int tmp;
-			// 小数点以降2桁から始まる（iが0の時、カウントダウンを10の-2乗で割ったら、100倍になる）
-			tmp = (int)(timeCnt / pow((double)10, (double)i - 2));
-			tmp = tmp % 10; // 1の位の値を取り出す
-
-			// 取り出した値を表示
-			// 小数点以降2桁を表示出来たら、1マスあけて、小数点以前の2桁を表示する
-			Sprite_Draw_2D(num->texture_index,
-				SCREEN_WIDTH - num->pos.x * (i < TIME_DIGIT_MAX / 2 ? i : i + 1) * 2 - num->pos.x, num->pos.y * 4,
-				num->tx + tmp * num->tw, num->ty,
-				num->tw, num->th);
-		}
+		num->Draw_Integer(timeCnt, num->digit_i, num->digit_d);
+		
 	}
 	// カウントダウンタイマーがない場合
 	else
 	{
-		for (int i = 0; i < TIME_DIGIT_MAX - 1; i++)
-		{
-			// 全部0で表示
-			Sprite_Draw_2D(num->texture_index,
-				SCREEN_WIDTH - num->pos.x * (i < TIME_DIGIT_MAX / 2 ? i : i + 1) * 2 - num->pos.x, num->pos.y * 4,
-				num->tx, num->ty,
-				num->tw, num->th);
-		}
+		num->Draw_Integer(0, num->digit_i, num->digit_d);
 	}
-
-	Sprite_SetColor_2D(alpha->color); // 色のセット
-
-	// アルファベットの表示
-	for (int i = 0; i < alpha->len; i++)
-	{
-		Sprite_Draw_2D(alpha->texture_index,
-			SCREEN_WIDTH - num->pos.x * DIGIT_MAX * 2 - alpha->pos.x * (alpha->len - i) * 2, alpha->pos.y * 4,
-			alpha->tx + ((alpha->word[i] - 65) % 13) * alpha->tw, alpha->ty + (alpha->word[i] - 65) / 13 * alpha->th,
-			alpha->tw, alpha->th);
-	}
+	alpha->Draw();
 }
 
 // フリー状態
@@ -199,7 +172,8 @@ void Aiming2D::Prepare()
 			}
 		}
 		//aiming.charge_span = 0;
-		state = AIMING_STATE_FREE;
+		state = AIMING_STATE_ZOOM_BACKWARD_PREPARE;
+		zoomStart = cameraFP->posEye.z;
 		delete timer; // カウントダウンタイマーインスタンスの削除
 		timer = NULL;
 		return;
@@ -235,7 +209,7 @@ void Aiming2D::Zoom_Forward(float start, float zm, float zi)
 	
 	cameraFP->bZoom = true;
 
-	if (cameraFP->rotEye.x != cameraFP->rotEye_init.x || cameraFP->rotEye.y != cameraFP->rotEye_init.y)
+	if (cameraFP->rotEye.x != cameraFP->rotEyeDef.x || cameraFP->rotEye.y != cameraFP->rotEyeDef.y)
 	{
 		cameraFP->Set_Rot_Reset_Value();
 		cameraFP->Rot_Reset();
@@ -269,7 +243,7 @@ void Aiming2D::Zoom_Forward(float start, float zm, float zi)
 			}
 			else if (state == AIMING_STATE_CHECK_ARROW && GetKeyboardTrigger(DIK_C))
 			{
-				state = AIMING_STATE_ZOOM_BACKWARD;
+				state = AIMING_STATE_ZOOM_BACKWARD_SHOT;
 				zoomStart = cameraFP->posEye.z;
 			}
 		}
@@ -283,7 +257,7 @@ void Aiming2D::Zoom_Backward(float start, float zm, float zi)
 
 	cameraFP->bZoom = true;
 
-	if (cameraFP->rotEye.x != cameraFP->rotEye_init.x || cameraFP->rotEye.y != cameraFP->rotEye_init.y)
+	if (cameraFP->rotEye.x != cameraFP->rotEyeDef.x || cameraFP->rotEye.y != cameraFP->rotEyeDef.y)
 	{
 		cameraFP->Set_Rot_Reset_Value();
 		cameraFP->Rot_Reset();
@@ -293,7 +267,7 @@ void Aiming2D::Zoom_Backward(float start, float zm, float zi)
 		// Camera回転のリセットが終わったら、リセット値セットフラグをオフに
 		cameraFP->bSetValue = false;
 
-		if (cameraFP->posEye.z > start - zm * 2)
+		if (cameraFP->posEye.z > start - zm)
 		{
 			cameraFP->Zoom_Backward(zi);
 		}

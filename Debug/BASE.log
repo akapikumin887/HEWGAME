@@ -1,12 +1,31 @@
 ﻿  aiming.cpp
   arrow.cpp
   camera.cpp
+  debug_font.cpp
+  fade.cpp
+  field.cpp
   game.cpp
+  gravility.cpp
+  HitCheck.cpp
+  input.cpp
+  light.cpp
   main.cpp
+  mode.cpp
+  mydirect3d.cpp
   plane.cpp
+  result.cpp
   score.cpp
-  title.cpp
-  ui.cpp
-  wind.cpp
+  sprite.cpp
+  system_timer.cpp
+  target.cpp
   コードを生成中...
-  BASE.vcxproj -> C:\Users\XUWENJIE\Documents\HAL\DX21\BASEDX\Debug\BASE.exe
+  コンパイル中...
+  texture.cpp
+  title.cpp
+  tool_functions.cpp
+  ui.cpp
+d:\hal\basedx\ui.cpp(113): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  wind.cpp
+  xmodel.cpp
+  コードを生成中...
+  BASE.vcxproj -> D:\HAL\BASEDX\Debug\BASE.exe

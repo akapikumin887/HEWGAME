@@ -10,12 +10,9 @@
 #include "sprite.h"
 #include "texture.h"
 
-#ifndef TARGET_H_
-#define TARGET_H_
-
 #define TARGET_X 0.0f
-#define TARGET_Y 2.5f
-#define TARGET_Z 15.0f
+#define TARGET_Y 0.0f
+#define TARGET_Z 23.0f
 #define TARGET_MAG_Z 6.0f
 #define TARGET_SIZE 5.0f
 
@@ -37,4 +34,3 @@ public:
 	void Update();   // TargetÇÃçXêV
 	void Draw();     // TargetÇÃï`âÊ
 };
-#endif

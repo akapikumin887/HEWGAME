@@ -241,7 +241,7 @@ bool Initialize(void)
 
 	//InitSound(g_hWnd);
 
-	Light_Initialize();
+	//Light_Initialize();
 	
 	// システムタイマーの初期化
 	g_System_Time.SystemTimer_Initialize();
@@ -277,8 +277,7 @@ void Update(void)
 {
 	Input_Update();
 
-	Light_Update();
-
+	//Light_Update();
 	
 	if (Get_Fade_State() == FADE_STATE_NONE)
 	{
@@ -318,7 +317,7 @@ void Draw(void)
 	// 描画バッチ命令の開始
 	pD3DDevice->BeginScene();
 
-	Light_Draw();
+	//Light_Draw();
 
 	DebugFont_Draw(640, 2, "Time: %.02lf", g_System_Time.SystemTimer_GetTime());
 
@@ -365,7 +364,7 @@ void Finalize(void)
 
 	//UninitSound();
 
-	Light_Finalize();
+	//Light_Finalize();
 	Sprite_Finalize_2D();
 	Texture_Release();
 	// ゲームの終了処理(Direct3Dの終了処理)

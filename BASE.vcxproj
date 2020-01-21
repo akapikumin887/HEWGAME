@@ -25,6 +25,7 @@
     <ClInclude Include="common.h" />
     <ClInclude Include="debug_font.h" />
     <ClInclude Include="fade.h" />
+    <ClInclude Include="field.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="gravility.h" />
     <ClInclude Include="HitCheck.h" />
@@ -33,6 +34,7 @@
     <ClInclude Include="mode.h" />
     <ClInclude Include="mydirect3d.h" />
     <ClInclude Include="plane.h" />
+    <ClInclude Include="result.h" />
     <ClInclude Include="score.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="system_timer.h" />
@@ -50,6 +52,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="debug_font.cpp" />
     <ClCompile Include="fade.cpp" />
+    <ClCompile Include="field.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="gravility.cpp" />
     <ClCompile Include="HitCheck.cpp" />
@@ -59,6 +62,7 @@
     <ClCompile Include="mode.cpp" />
     <ClCompile Include="mydirect3d.cpp" />
     <ClCompile Include="plane.cpp" />
+    <ClCompile Include="result.cpp" />
     <ClCompile Include="score.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="system_timer.cpp" />

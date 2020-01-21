@@ -11,15 +11,12 @@
 #include "texture.h"
 #include "ui.h"
 
-#ifndef Score_H_
-#define Score_H_
-
 class Score
 {
 public:
 	Number   *num;
 	Alphabet *alpha;
-	int      s[5];
+	int      s;
 
 	Score();  // Scoreの初期化（コンストラクタ）
 	~Score(); // Scoreの終了処理（デストラクタ）
@@ -31,4 +28,3 @@ public:
 
 	void Add_Score(int s); // Scoreの加算
 };
-#endif
