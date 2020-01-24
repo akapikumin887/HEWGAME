@@ -78,7 +78,8 @@ void Game_Update()
 
 	if (ArrowManager::cnt == ARROW_MAX && GetKeyboardTrigger(DIK_C) && aiming.state == AIMING_STATE_FREE || GetKeyboardTrigger(DIK_T))
 	{
-		SetScene(SCENE_TITLE);
+		//SetScene(SCENE_TITLE);
+		SetScene(SCENE_RESULT);
 		return;
 	}
 
@@ -120,7 +121,7 @@ void Game_Draw()
 
 	aiming.Draw();
 
-	sn.Draw_Integer(ArrowManager::score_t, sn.digit_i);
+	sn.Draw(ArrowManager::score_t, sn.digit_i);
 	sa.Draw();
 
 	//DebugFont_Draw(2, 2, "CameraAtRot  x: %.2lf  y: %.2lf  z: %.2lf", cameraTP.rotAt.x, cameraTP.rotAt.y, cameraTP.rotAt.z);

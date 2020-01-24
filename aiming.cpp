@@ -110,13 +110,13 @@ void Aiming2D::Draw_Timer()
 	// カウントダウンタイマーがある場合
 	if (timer != NULL)
 	{
-		num->Draw_Integer(timeCnt, num->digit_i, num->digit_d);
+		num->Draw(timeCnt, num->digit_i, num->digit_d);
 		
 	}
 	// カウントダウンタイマーがない場合
 	else
 	{
-		num->Draw_Integer(0, num->digit_i, num->digit_d);
+		num->Draw(0, num->digit_i, num->digit_d);
 	}
 	alpha->Draw();
 }

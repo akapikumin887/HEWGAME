@@ -28,7 +28,7 @@ void XModel::XModel_Initialize(const char *filepass)
 	{
 		
 	}
-	pD3DXTextureModel = Texture_GetTexture(TEXTURE_INDEX_KIZUNA);
+	pD3DXTextureModel = Texture_GetTexture(TEXTURE_INDEX_MAX);
 }
 
 // XModel‚ÌI—¹ˆ—
@@ -77,7 +77,7 @@ void XModel::XModel_Draw()
 		}
 		else
 		{
-			pDevice->SetTexture(0, Texture_GetTexture(TEXTURE_INDEX_KIZUNA));
+			pDevice->SetTexture(0, Texture_GetTexture(TEXTURE_INDEX_MAX));
 		}
 		pD3DXMeshModel->DrawSubset(nCntMat);
 	}

@@ -51,7 +51,7 @@ void Number::Initialize(TextureIndex tex_idx, D3DXVECTOR2 s, D3DXVECTOR2 p, int 
 }
 
 // Number‚Ì•`‰æ
-void Number::Draw_Integer(double n, int di, int dd, float r)
+void Number::Draw(double n, int di, int dd, float r)
 {
 	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 

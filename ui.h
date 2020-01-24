@@ -45,13 +45,13 @@ public:
 	int digit_d; // 数字の位(小数部)
 
 	// Numberの初期化
-	virtual void Initialize(TextureIndex tex_idx,        // TextureIndexの設定
+	void Initialize(TextureIndex tex_idx,                // TextureIndexの設定
 		D3DXVECTOR2 s, D3DXVECTOR2 p,                    // サイズ・最後尾の位置の設定
 		int t_x = 0, int t_y = 0,                        // t_x, t_yは切り取り開始位置(デフォルト値は0: テクスチャ左上から切り取る)
 		int t_w = 1, int t_h = 1,                        // t_w, t_hは切り取り単位(デフォルト値は1: テクスチャの右下まで切り取る)
 		int di = 1, int dd = 0,                          // 数字の位（整数部・小数部)
 		D3DCOLOR c = D3DCOLOR_RGBA(255, 255, 255, 255)); // 色の設定
-	void Draw_Integer(double n, int di, int dd = 0, float r = 0.0f); // Numberの描画
+	void Draw(double n, int di = 1, int dd = 0, float r = 0.0f); // Numberの描画
 };
 
 class Alphabet :public UI

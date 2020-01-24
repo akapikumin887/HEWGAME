@@ -38,7 +38,7 @@ void Score::Update()
 // Score‚Ì•`‰æ
 void Score::Draw()
 {
-	//num->Draw_Integer(SCORE_DIGIT_MAX, ArrowManager::score_t);
+	//num->Draw(SCORE_DIGIT_MAX, ArrowManager::score_t);
 }
 
 // Score‚Ì‰ÁŽZ

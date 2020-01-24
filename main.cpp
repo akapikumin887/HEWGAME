@@ -34,6 +34,7 @@
 #include "ui.h"
 #include "score.h"
 #include "fade.h"
+#include "result.h"
 
 //====================================================
 // 定数定義
@@ -235,10 +236,10 @@ bool Initialize(void)
 		MessageBox(g_hWnd, "いくつか読み込めなかったテクスチャファイルがあります", "エラー", MB_OK);
 	}
 
-	SetScene(SCENE_TITLE);
+	//SetScene(SCENE_TITLE);
 	//SetScene(SCENE_MODE);
-	//SetScene(SCENE_GAME);
-
+	SetScene(SCENE_GAME);
+	//SetScene(SCENE_RESULT);
 	//InitSound(g_hWnd);
 
 	//Light_Initialize();
@@ -293,7 +294,7 @@ void Update(void)
 			Game_Update();
 			break;
 		case SCENE_RESULT:
-
+			Result_Update();
 			break;
 		case SCENE_RANKING:
 			//Ranking_Update();
@@ -333,7 +334,7 @@ void Draw(void)
 		Game_Draw();
 		break;
 	case SCENE_RESULT:
-
+		Result_Draw();
 		break;
 	case SCENE_RANKING:
 		//Ranking_Draw();
@@ -388,7 +389,7 @@ void SetScene(SCENE s)
 		Game_Finalize();
 		break;
 	case SCENE_RESULT:
-
+		Result_Finalize();
 		break;
 	case SCENE_RANKING:
 		//Ranking_Finalize();
@@ -409,7 +410,7 @@ void SetScene(SCENE s)
 		Game_Initialize();
 		break;
 	case SCENE_RESULT:
-
+		Result_Initialize();
 		break;
 	case SCENE_RANKING:
 		//Ranking_Initialize();
