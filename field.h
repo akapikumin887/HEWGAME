@@ -10,7 +10,7 @@
 #include "sprite.h"
 #include "texture.h"
 
-#define FIELD_MAX 8
+#define FIELD_MAX 10
 
 class Field
 {

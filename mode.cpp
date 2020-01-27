@@ -3,9 +3,10 @@
 #include "tool_functions.h"
 #include "camera.h"
 #include "fade.h"
+#include "ui.h"
 
-static Mode mode[MODE_OBJECT_MAX];
 static CameraTP camera;
+static Mode mode[MODE_OBJECT_MAX];
 static bool right;
 static bool left;
 static MODE g_mode;
@@ -13,10 +14,12 @@ static MODE g_mode;
 void Mode_Initialize()
 {
 	camera.Initialize(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, -10.0f));
-	mode[0].Initialize(TEXTURE_INDEX_MODE_EASY, D3DXVECTOR3(-3.0f, 0.0f, 0.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 0.0f, 3.0f));
-	mode[1].Initialize(TEXTURE_INDEX_MODE_NORMAL, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 0.0f, 3.0f));
-	mode[2].Initialize(TEXTURE_INDEX_MODE_HARD, D3DXVECTOR3(3.0f, 0.0f, 0.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 0.0f, 3.0f));
-	mode[3].Initialize(TEXTURE_INDEX_MODE_SELECT, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 0.0f, 3.0f));
+	mode[0].Initialize(TEXTURE_INDEX_BG, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+	mode[1].Initialize(TEXTURE_INDEX_MODE_EASY, D3DXVECTOR3(-3.0f, 0.0f, 0.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 0.0f, 3.0f));
+	mode[2].Initialize(TEXTURE_INDEX_MODE_NORMAL, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 0.0f, 3.0f));
+	mode[3].Initialize(TEXTURE_INDEX_MODE_HARD, D3DXVECTOR3(3.0f, 0.0f, 0.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 0.0f, 3.0f));
+	mode[4].Initialize(TEXTURE_INDEX_MODE_SELECT, D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 0.0f, 3.0f));
+	
 	right = left = false;
 	g_mode = MODE_NONE;
 }
@@ -34,7 +37,7 @@ void Mode_Finalize()
 void Mode_Update()
 {
 	camera.Update(D3DXVECTOR3(camera.posAtDef));
-	for (int i = 0; i < MODE_OBJECT_MAX - 1; i++)
+	for (int i = 1; i < MODE_OBJECT_MAX - 1; i++)
 	{
 		mode[i].Update();
 	}
@@ -42,7 +45,7 @@ void Mode_Update()
 	// ‰E
 	if (right && !left)
 	{
-		mode[MODE_OBJECT_MAX - 1].pos = mode[0].pos;
+		mode[MODE_OBJECT_MAX - 1].pos = mode[1].pos;
 
 		if (GetKeyboardTrigger(DIK_A))
 		{
@@ -61,7 +64,7 @@ void Mode_Update()
 	// ^‚ñ’†
 	else if (!right && !left)
 	{
-		mode[MODE_OBJECT_MAX - 1].pos = mode[1].pos;
+		mode[MODE_OBJECT_MAX - 1].pos = mode[2].pos;
 
 		if (GetKeyboardTrigger(DIK_A))
 		{
@@ -79,7 +82,7 @@ void Mode_Update()
 	// ¶
 	else if (!right && left)
 	{
-		mode[MODE_OBJECT_MAX - 1].pos = mode[2].pos;
+		mode[MODE_OBJECT_MAX - 1].pos = mode[3].pos;
 
 		if (GetKeyboardTrigger(DIK_A))
 		{
@@ -110,6 +113,7 @@ void Mode_Draw()
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	camera.Draw();
+	
 	for (int i = 0; i < MODE_OBJECT_MAX; i++)
 	{
 		mode[i].Draw();

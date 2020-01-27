@@ -828,7 +828,7 @@ void Cube::CreateCube(D3DXVECTOR3 sz)
 	//反射光の設定
 	for (int i = 0; i < 36; i++)
 	{
-		pVtx[i].diffuse = D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.0f);
+		pVtx[i].diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	// テクスチャ座標の設定

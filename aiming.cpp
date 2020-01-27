@@ -126,6 +126,7 @@ void Aiming2D::Free()
 {
 	if (GetKeyboardTrigger(DIK_LSHIFT) && ArrowManager::cnt < ARROW_MAX)
 	{
+		BowXModel::state = ARROW_STATE_PREPARE;
 		ArrowManager::Add_Arrow();
 		state = AIMING_STATE_ZOOM_FORWARD;
 		zoomStart = Get_Game_CameraFP()->posEye.z;
@@ -176,6 +177,7 @@ void Aiming2D::Prepare()
 		zoomStart = cameraFP->posEye.z;
 		delete timer; // カウントダウンタイマーインスタンスの削除
 		timer = NULL;
+		BowXModel::state = ARROW_STATE_NONE;
 		return;
 	}
 	// 時間制限内
@@ -245,6 +247,7 @@ void Aiming2D::Zoom_Forward(float start, float zm, float zi)
 			{
 				state = AIMING_STATE_ZOOM_BACKWARD_SHOT;
 				zoomStart = cameraFP->posEye.z;
+				BowXModel::state = ARROW_STATE_NONE;
 			}
 		}
 	}

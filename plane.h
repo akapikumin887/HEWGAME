@@ -10,6 +10,8 @@
 #include "sprite.h"
 #include "texture.h"
 
+#define PLANE_MAX 2
+
 class Plane :public FaceEX
 {
 public:

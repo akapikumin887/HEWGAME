@@ -14,7 +14,6 @@
 #include "sprite.h"
 #include "texture.h"
 #include "xmodel.h"
-#include "mydirect3d.h"
 #include "debug_font.h"
 #include "time.h"
 #include "system_timer.h"
@@ -313,7 +312,7 @@ void Draw(void)
 	static LPDIRECT3DDEVICE9 pD3DDevice = MyDirect3D_GetDevice();
 
 	// 画面のクリア
-	pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(200, 200, 0, 255), 1.0f, 0);
+	pD3DDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(123, 207, 241, 255), 1.0f, 0);
 
 	// 描画バッチ命令の開始
 	pD3DDevice->BeginScene();

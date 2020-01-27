@@ -15,10 +15,10 @@
 #include "ui.h"
 #include "score.h"
 
-#define ARROWXMODEL "asset/xmodel/sample.x"
+#define ARROWXMODEL "asset/xmodel/bow.x"
 
-#define ARROW_SIZE_X 0.05f
-#define ARROW_SIZE_Y 0.05f
+#define ARROW_SIZE_X 0.025f
+#define ARROW_SIZE_Y 0.025f
 #define ARROW_SIZE_Z 5.0f
 
 #define ARROW_POS_X 0.0f
@@ -31,7 +31,7 @@
 #define ARROW_ROT_Z 0.0f
 
 #define ARROW_MAX 5
-#define ARROW_MOVE_SPEED 3.0f
+#define ARROW_MOVE_SPEED 8.0f
 
 enum ArrowState {
 	ARROW_STATE_NONE,
@@ -43,23 +43,30 @@ enum ArrowState {
 	ARROW_STATE_OVER_FLYING,
 };
 
-class ArrowXModel
+class BowXModel
 {
 public:
-	D3DXVECTOR3 pos;       // 現在位置
-	D3DXVECTOR3 rot;       // 回転
+	TextureIndex texture_index; // テクスチャインデックス
+	D3DXVECTOR3  pos;           // 現在位置
+	D3DXVECTOR3  rot;           // 回転
+	D3DXMATRIX   mtxWorld;      // ワールドマトリックス
+	XModel       *xmodel;       // XModel
+
+	D3DXVECTOR3 posAiming; // 発射時のAimingの位置情報
 	D3DXVECTOR3 direction; // 向き
 	D3DXVECTOR3 move;      // 移動量
-	D3DXMATRIX  mtxWorld;  // ワールドマトリックス
-	XModel      *xmodel;   // XModel
 
-	ArrowXModel();  // ArrowXModelの初期化（コンストラクタ）
-	~ArrowXModel(); // ArrowXModelの終了処理（デストラクタ）
+	static ArrowState state; // BowXModelの状態
 
-	void Initialize(); // ArrowXModelの初期化
-	void Finalize();   // ArrowXModelの終了処理
-	void Update();     // ArrowXModelの更新
-	void Draw();       // ArrowXModelの描画
+	BowXModel();  // BowXModelの初期化（コンストラクタ）
+	~BowXModel(); // BowXModelの終了処理（デストラクタ）
+
+	void Initialize(const char *filepass, TextureIndex tex_idx, D3DXVECTOR3 p, D3DXVECTOR3 r); // BowXModelの初期化
+	void Finalize();   // BowXModelの終了処理
+	void Update();     // BowXModelの更新
+	void Draw();       // BowXModelの描画
+
+	void Aiming_Direction(); // BowXModelの向き
 };
 
 class Arrow

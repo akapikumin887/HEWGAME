@@ -16,12 +16,12 @@
 #define VIEW_NEAR_Z (1.0f) // ビュー平面のNearZ値
 #define VIEW_FAR_Z (1000.0f) // ビュー平面のFarZ値
 
-#define CAMERAEYE_X 0.0f
-#define CAMERAEYE_Y 1.5f
-#define CAMERAEYE_Z -31.0f
+#define CAMERAEYE_X 1.0f
+#define CAMERAEYE_Y 1.0f
+#define CAMERAEYE_Z -27.2f
 #define CAMERAAT_X 0.0f
 #define CAMERAAT_Y 0.0f
-#define CAMERAAT_Z 1.5f
+#define CAMERAAT_Z 0.0f
 #define EYETOATLEN sqrtf(powf(posEye.x - posAt.x, 2.0f) + powf(posEye.y - posAt.y, 2.0f) + powf(posEye.z - posAt.z, 2.0f))
 #define CAMERAEYEROT 0.125f
 #define CAMERAATROT 1.0f

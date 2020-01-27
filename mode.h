@@ -10,7 +10,7 @@
 #include "sprite.h"
 #include "texture.h"
 
-#define MODE_OBJECT_MAX 4
+#define MODE_OBJECT_MAX 5
 
 enum MODE {
 	MODE_NONE,

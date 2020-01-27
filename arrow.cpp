@@ -4,49 +4,71 @@
 #include "tool_functions.h"
 #include "game.h"
 
+// BowXModel
+ArrowState BowXModel::state;
+
+// Arrow
 float Arrow::speed = ARROW_MOVE_SPEED;
 Arrow* ArrowManager::arrows;
 int ArrowManager::num;
 int ArrowManager::cnt;
 int ArrowManager::score_t;
 
-// ArrowXModel
-// ArrowXModelの初期化（コンストラクタ）
-ArrowXModel::ArrowXModel()
+// BowXModel
+// BowXModelの初期化（コンストラクタ）
+BowXModel::BowXModel()
 {
 	xmodel = new XModel;
 }
 
-// ArrowXModelの終了処理（デストラクタ）
-ArrowXModel::~ArrowXModel()
+// BowXModelの終了処理（デストラクタ）
+BowXModel::~BowXModel()
 {
 	delete xmodel;
 }
 
-// ArrowXModelの初期化
-void ArrowXModel::Initialize()
+// BowXModelの初期化
+void BowXModel::Initialize(const char *filepass, TextureIndex tex_idx, D3DXVECTOR3 p, D3DXVECTOR3 r)
+{
+	texture_index = tex_idx;
+	pos = p;
+	rot = r;
+	state = ARROW_STATE_NONE;
+	if (xmodel == NULL)
+	{
+		xmodel = new XModel;
+	}
+	xmodel->XModel_Initialize(filepass);
+}
+
+// BowXModelの終了処理
+void BowXModel::Finalize()
 {
 	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	xmodel->XModel_Initialize(ARROWXMODEL);
+	if (xmodel != NULL)
+	{
+		delete xmodel;
+		xmodel = NULL;
+	}
 }
 
-// ArrowXModelの終了処理
-void ArrowXModel::Finalize()
+// BowXModelの更新
+void BowXModel::Update()
 {
-	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	xmodel->XModel_Finalize();
+	switch (state)
+	{
+	case ARROW_STATE_PREPARE:
+		Aiming_Direction();
+		break;
+	default:
+		rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+		break;
+	}
 }
 
-// ArrowXModelの更新
-void ArrowXModel::Update()
-{
-
-}
-
-// ArrowXModelの描画
-void ArrowXModel::Draw()
+// BowXModelの描画
+void BowXModel::Draw()
 {
 	LPDIRECT3DDEVICE9 pDevice = MyDirect3D_GetDevice();
 
@@ -58,7 +80,17 @@ void ArrowXModel::Draw()
 
 	pDevice->SetTransform(D3DTS_WORLD, &mtxWorld); // ワールドマトリックスを設定
 
-	xmodel->XModel_Draw();
+	xmodel->XModel_Draw(texture_index);
+}
+
+// Arrowの発射時の向き
+void BowXModel::Aiming_Direction()
+{
+	Aiming2D *aiming = Get_Game_Aiming();
+	posAiming = aiming->posHit;
+	direction = posAiming - pos;
+	D3DXVec3Normalize(&direction, &direction); // Arrowの向きの正規化
+	rot = D3DXVECTOR3(-D3DXToDegree(atan2f(direction.y, direction.z)), D3DXToDegree(atan2f(direction.x, direction.z)), 0.0f); // 向きによるArrowの回転
 }
 
 // Arrowポリゴン
@@ -80,7 +112,7 @@ Arrow::~Arrow()
 
 void Arrow::Initialize()
 {
-	texture_index = TEXTURE_INDEX_MAX;
+	texture_index = TEXTURE_INDEX_ARROW;
 	pos = D3DXVECTOR3(ARROW_POS_X, ARROW_POS_Y, ARROW_POS_Z);
 	rot = D3DXVECTOR3(ARROW_ROT_X, ARROW_ROT_Y, ARROW_ROT_Z);
 	cube->CreateCube(D3DXVECTOR3(ARROW_SIZE_X, ARROW_SIZE_Y, ARROW_SIZE_Z));

@@ -6,13 +6,16 @@
 #include "mode.h"
 
 static CameraFP cameraFP;
-static Plane plane;
+static Plane plane[PLANE_MAX];
 static Aiming2D aiming;
+static BowXModel bow;
 static Target target;
 static Mode mode;
+static Field sky;
 static Field field[FIELD_MAX];
 static Number sn;
 static Alphabet sa;
+
 
 // 共通GameObjectのバッファ生成
 void Game_Object_Create_Public()
@@ -24,24 +27,35 @@ void Game_Object_Create_Public()
 void Game_Initialize()
 {
 	Game_Object_Create_Public();
-	//Set_Mode(MODE_HARD);
+	Set_Mode(MODE_HARD);
 	cameraFP.Initialize(D3DXVECTOR3(CAMERAEYE_X, CAMERAEYE_Y, CAMERAEYE_Z), D3DXVECTOR3(CAMERAAT_X, CAMERAAT_Y, CAMERAAT_Z));
-	plane.Initialize(TEXTURE_INDEX_PLANE, D3DXVECTOR3(0.0f, -2.5f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(32.0f, 0.0f, 48.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
-	
-	field[0].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(-16.0f, 2.0f, -16.0f), D3DXVECTOR3(-90.0f, -90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
-	field[1].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(-16.0f, 2.0f, 0.0f), D3DXVECTOR3(-90.0f, -90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
-	field[2].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(-16.0f, 2.0f, 16.0f), D3DXVECTOR3(-90.0f, -90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
 
-	field[3].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(16.0f, 2.0f, -16.0f), D3DXVECTOR3(-90.0f, 90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
-	field[4].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(16.0f, 2.0f, 0.0f), D3DXVECTOR3(-90.0f, 90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
-	field[5].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(16.0f, 2.0f, 16.0f), D3DXVECTOR3(-90.0f, 90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+	plane[0].Initialize(TEXTURE_INDEX_PLANE, D3DXVECTOR3(0.0f, -2.5f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(32.0f, 0.0f, 48.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	plane[1].Initialize(TEXTURE_INDEX_PLANE, D3DXVECTOR3(0.0f, -2.5f, -48.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(32.0f, 0.0f, 48.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
 
-	field[6].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(-8.0f, 2.0f, 24.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
-	field[7].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(8.0f, 2.0f, 24.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+	sky.Initialize(TEXTURE_INDEX_SKY, D3DXVECTOR3(0.0f, 16.0f, 50.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 4.0f) * 100.0f);
+
+	field[0].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(-16.0f, 2.0f, -32.0f), D3DXVECTOR3(-90.0f, -90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+	field[1].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(-16.0f, 2.0f, -16.0f), D3DXVECTOR3(-90.0f, -90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+	field[2].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(-16.0f, 2.0f, 0.0f), D3DXVECTOR3(-90.0f, -90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+	field[3].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(-16.0f, 2.0f, 16.0f), D3DXVECTOR3(-90.0f, -90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+
+	field[4].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(16.0f, 2.0f, -32.0f), D3DXVECTOR3(-90.0f, 90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+	field[5].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(16.0f, 2.0f, -16.0f), D3DXVECTOR3(-90.0f, 90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+	field[6].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(16.0f, 2.0f, 0.0f), D3DXVECTOR3(-90.0f, 90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+	field[7].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(16.0f, 2.0f, 16.0f), D3DXVECTOR3(-90.0f, 90.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+
+	field[8].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(-8.0f, 2.0f, 24.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
+	field[9].Initialize(TEXTURE_INDEX_SIDE, D3DXVECTOR3(8.0f, 2.0f, 24.0f), D3DXVECTOR3(-90.0f, 0.0f, 0.0f), D3DXVECTOR3(16.0f, 0.0f, 9.0f));
 	
 	target.Initialize();
+
 	aiming.Initialize();
+
+	bow.Initialize(ARROWXMODEL, TEXTURE_INDEX_BOW, D3DXVECTOR3(0.0f, 0.0f, -20.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+
 	ArrowManager::Initialize(ARROW_MAX);
+
 	Gravility::Initialize();
 
 	sn.Initialize(TEXTURE_INDEX_NUMBER, D3DXVECTOR2(32.0f, 32.0f), D3DXVECTOR2(SCREEN_WIDTH, 32.0f), 0, 0, 10, 1, SCORE_DIGIT_MAX);
@@ -52,11 +66,24 @@ void Game_Initialize()
 void Game_Finalize()
 {
 	cameraFP.Finalize();
-	plane.Finalize();
+
+	for (int i = 0; i < PLANE_MAX; i++)
+	{
+		plane[i].Finalize();
+	}
+	
+	sky.Finalize();
+
+	for (int i = 0; i < FIELD_MAX; i++)
+	{
+		field[i].Finalize();
+	}
+	
 	target.Finalize();
 	aiming.Finalize();
 	sn.Finalize();
 	sa.Finalize();
+	bow.Finalize();
 }
 
 // Gameの更新
@@ -65,8 +92,9 @@ void Game_Update()
 	// Gameのリセット
 	if (GetKeyboardTrigger(DIK_RSHIFT))
 	{
+		Game_Finalize();
 		ArrowManager::Finalize();
-		SetScene(SCENE_GAME);
+		Game_Initialize();
 		return;
 	}
 	
@@ -87,13 +115,27 @@ void Game_Update()
 	cameraFP.Update();
 
 	// Planeの更新
-	plane.Update();
+	for (int i = 0; i < PLANE_MAX; i++)
+	{
+		plane[i].Update();
+	}
+
+	// Skyの更新
+	sky.Update();
+	
+	// Fieldの更新
+	for (int i = 0; i < FIELD_MAX; i++)
+	{
+		field[i].Update();
+	}
 
 	// Targetの更新
 	target.Update();
 	
 	// Aiming3Dの更新
 	aiming.Update();
+
+	bow.Update();
 
 	ArrowManager::Update();
 
@@ -108,7 +150,13 @@ void Game_Draw()
 	pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	cameraFP.Draw();
-	plane.Draw();
+
+	for (int i = 0; i < PLANE_MAX; i++)
+	{
+		plane[i].Draw();
+	}
+	
+	//sky.Draw();
 
 	for (int i = 0; i < FIELD_MAX; i++)
 	{
@@ -117,12 +165,19 @@ void Game_Draw()
 
 	target.Draw();
 	
+	if (bow.xmodel != NULL)
+	{
+		bow.Draw();
+	}
+
 	ArrowManager::Draw();
 
 	aiming.Draw();
 
 	sn.Draw(ArrowManager::score_t, sn.digit_i);
 	sa.Draw();
+
+	
 
 	//DebugFont_Draw(2, 2, "CameraAtRot  x: %.2lf  y: %.2lf  z: %.2lf", cameraTP.rotAt.x, cameraTP.rotAt.y, cameraTP.rotAt.z);
 	DebugFont_Draw(2, 2, "CameraEye  x: %.2lf  y: %.2lf  z: %.2lf", cameraFP.posEye.x, cameraFP.posEye.y, cameraFP.posEye.z);
@@ -152,5 +207,5 @@ Target* Get_Game_Target()
 // Plane情報の取得
 Plane* Get_Game_Plane()
 {
-	return &plane;
+	return plane;
 }

@@ -4,6 +4,7 @@
 #include "fade.h"
 
 static UI bg;
+static UI title;
 static UI start;
 static UI ranking;
 static UI arrow;
@@ -12,7 +13,9 @@ static bool up;
 
 void Title_Initialize(void)
 {	
-	bg.Initialize(TEXTURE_INDEX_TITLE01, D3DXVECTOR2(SCREEN_WIDTH, SCREEN_HEIGHT),
+	bg.Initialize(TEXTURE_INDEX_BG, D3DXVECTOR2(SCREEN_WIDTH, SCREEN_HEIGHT),
+		D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f));
+	title.Initialize(TEXTURE_INDEX_TITLE, D3DXVECTOR2(SCREEN_WIDTH, SCREEN_HEIGHT),
 		D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.5f));
 	start.Initialize(TEXTURE_INDEX_TITLE_START, D3DXVECTOR2((float)Texture_GetWidth(TEXTURE_INDEX_TITLE_START), (float)Texture_GetHeight(TEXTURE_INDEX_TITLE_START)),
 		D3DXVECTOR2(SCREEN_WIDTH * 0.5f, SCREEN_HEIGHT * 0.7f));
@@ -55,6 +58,7 @@ void Title_Update(void)
 void Title_Draw(void)
 {
 	bg.Draw();
+	title.Draw();
 	start.Draw();
 	ranking.Draw();
 	arrow.Draw();
